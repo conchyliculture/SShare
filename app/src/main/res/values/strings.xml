@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">SShare</string>
+    <string name="sftp_method">SFTP</string>
+    <string name="lp_auth">Login/password</string>
+    <string name="key_auth">Public/Private keys</string>
+    <string-array name="protocol_modes">
+        <!-- Order is important! -->
+        <item>@string/sftp_method</item>
+        <!--item>SCP</item>
+        <item>FTPS</item>
+        <item>FTP</item-->
+    </string-array>
+
+    <string-array name="authentication_modes">
+        <item>@string/lp_auth</item>
+        <item>@string/key_auth</item>
+    </string-array>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <!-- Example settings for Data & Sync -->
+
+    <!-- Example settings for Notifications -->
+
+    <string name="create_connection">\"Create New Connection\"</string>
+</resources>
