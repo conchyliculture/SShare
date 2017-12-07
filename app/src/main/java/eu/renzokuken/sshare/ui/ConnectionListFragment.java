@@ -12,12 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
 import java.util.List;
 
 import eu.renzokuken.sshare.ConnectionHelpers;
 import eu.renzokuken.sshare.persistence.Connection;
-import eu.renzokuken.sshare.persistence.MyDB;
 import eu.renzokuken.sshare.upload.FileUploader;
 import eu.renzokuken.sshare.upload.SFTPFileUploader;
 import eu.renzokuken.sshare.upload.SShareMonitor;
@@ -30,39 +28,33 @@ public class ConnectionListFragment extends ListFragment {
 
     private static final String TAG = "ConnectionListFragment";
     private Uri fileURI;
-    private List<Connection> connectionList;
 
-    private class ConnectionAdapter extends ArrayAdapter<Connection> {
-
-        public ConnectionAdapter(@NonNull Context context, int resource, @NonNull List<Connection> objects) {
-            super(context, resource, objects);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        MyDB database = MyDB.getDatabase(getActivity().getApplicationContext());
-        connectionList = database.connectionDao().getAllConnections();
-        ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1 , connectionList);
-        setListAdapter(connectionListAdapter);
-
-        Intent intent = getActivity().getIntent();
-        String action = intent.getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            fileURI = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        }
+    private List<Connection> getConnectionList() {
+        MainActivity a = (MainActivity) getActivity();
+        return a.getConnectionList();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        List<Connection> connectionList = getConnectionList();
+        ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1, connectionList);
+        setListAdapter(connectionListAdapter);
         ListView listView = getListView();
-        if (getActivity() instanceof MainActivity) {
-            listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
-        } else if (getActivity() instanceof ShareActivity) {
+        Intent intent = getActivity().getIntent();
+        String action = intent.getAction();
+        if (Intent.ACTION_SEND.equals(action)) {
+            fileURI = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             listView.setOnItemClickListener(new UploadFileOnItemClickListener());
+        } else {
+            listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
+        }
+    }
+
+    private class ConnectionAdapter extends ArrayAdapter<Connection> {
+
+        public ConnectionAdapter(@NonNull Context context, int resource, @NonNull List<Connection> objects) {
+            super(context, resource, objects);
         }
     }
 
@@ -82,17 +74,17 @@ public class ConnectionListFragment extends ListFragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             FileUploader fileUploader = null;
-            Connection connection = connectionList.get(i);
-            Log.i(TAG, "Uploading "+fileURI.toString()+" to " + connection.toString());
+            Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
+            Log.i(TAG, "Uploading " + fileURI.toString() + " to " + connection.toString());
             if (connection.protocol.equals(ConnectionHelpers.MODE_SFTP)) {
                 fileUploader = new SFTPFileUploader(getActivity());
             } else {
-                Log.e(TAG, "Protocol "+connection.protocol+" not implemented =(");
+                Log.e(TAG, "Protocol " + connection.protocol + " not implemented =(");
             }
 
             SShareMonitor monitor = new SShareMonitor(getActivity());
 
-            if (fileUploader!=null) {
+            if (fileUploader != null) {
                 fileUploader.uploadFile(connection, fileURI, monitor);
             }
         }

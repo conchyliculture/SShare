@@ -1,9 +1,9 @@
 package eu.renzokuken.sshare.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -39,6 +39,7 @@ public class NewAccountActivity extends AppCompatActivity {
     private TextInputEditText inputRemotePath;
 
     private boolean isAddingNewConnection = true;
+    private String authMode = ConnectionHelpers.DEFAULT_AUTH_MODE;
     private final TextWatcher globalTextChangedWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -53,8 +54,6 @@ public class NewAccountActivity extends AppCompatActivity {
         public void afterTextChanged(Editable editable) {
         }
     };
-
-    private String authMode = ConnectionHelpers.DEFAULT_AUTH_MODE;
     private ViewGroup credentialsLayout;
     private ViewGroup remotePathLayout;
     private ViewGroup hostnamePortLayout;
@@ -71,9 +70,6 @@ public class NewAccountActivity extends AppCompatActivity {
                 this.connection = new Connection();
             }
             isAddingNewConnection = false;
-            Log.i(TAG, "Got a connection " + connection.toString());
-        } else {
-            Log.i(TAG, "Making a new connection ");
         }
 
         setContentView(R.layout.add_activity);
@@ -108,7 +104,6 @@ public class NewAccountActivity extends AppCompatActivity {
 
     private void showProtocol() {
         ViewGroup protocolLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_protocol, container, true);
-        //this.container.addView(protocolLayout);
 
         protocolSpinner = findViewById(R.id.spinner_mode);
         final ArrayAdapter<CharSequence> connectionModesAdapter = ArrayAdapter.createFromResource(this,
@@ -119,7 +114,7 @@ public class NewAccountActivity extends AppCompatActivity {
         inputHostname.addTextChangedListener(globalTextChangedWatcher);
         inputPort = hostnamePortLayout.findViewById(R.id.input_port);
         inputPort.addTextChangedListener(globalTextChangedWatcher);
-        //this.container.addView(hostnamePortLayout);
+
         if (!isAddingNewConnection) {
             inputHostname.setText(connection.hostname);
             inputPort.setText(String.valueOf(connection.port));
@@ -215,7 +210,6 @@ public class NewAccountActivity extends AppCompatActivity {
         showSubmitButton();
     }
 
-
     private void showSubmitButton() {
         getLayoutInflater().inflate(R.layout.add_submit, remotePathLayout, true);
         submitButton = findViewById(R.id.submit_button);
@@ -244,10 +238,8 @@ public class NewAccountActivity extends AppCompatActivity {
                 connection.remotePath = inputRemotePath.getText().toString();
                 if (isAddingNewConnection) {
                     database.connectionDao().addConnection(connection);
-                    Log.i(TAG, "Added connection " + connection.hostname);
                 } else {
                     database.connectionDao().updateConnection(connection);
-                    Log.i(TAG, "Updated connection " + connection.hostname);
                 }
                 Intent intent = new Intent(NewAccountActivity.this, MainActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);

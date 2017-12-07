@@ -16,14 +16,25 @@
         <item>@string/key_auth</item>
     </string-array>
 
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
-
-    <!-- Example settings for Notifications -->
-
     <string name="create_connection">\"Create New Connection\"</string>
     <string name="notification_channelid">sshare_notification</string>
+
+    <!-- Strings related to Settings -->
+    <string name="title_activity_settings">Settings</string>
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+
+    <string name="pref_file_already_exists">When a file already exists</string>
+    <!-- DON'T CHANGE THESE -->
+    <string-array name="pref_file_already_exists_titles">
+        <item>Overwrite</item>
+        <item>Skip</item>
+    </string-array>
+    <string-array name="pref_file_already_exists_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="pref_file_already_exists_default">0</string>
+
 </resources>

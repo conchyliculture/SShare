@@ -1,10 +1,13 @@
 package eu.renzokuken.sshare.upload;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 
+import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 
 /**
@@ -12,11 +15,12 @@ import eu.renzokuken.sshare.persistence.Connection;
  */
 
 public abstract class FileUploader {
-    private static final String TAG = "FileUploader";
     final Context context;
+    private final SharedPreferences preferences;
 
     FileUploader(Context context) {
         this.context = context;
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     /**
@@ -70,5 +74,14 @@ public abstract class FileUploader {
             }
         }).start();
         // TODO : return to previous activity from which we shared
+    }
+
+    String getOverwritePref() {
+        /*
+          Reminder: "0" for "Overwrite", "1" for "skip/resume"
+         */
+        return this.preferences.getString(
+                context.getString(R.string.pref_file_already_exists),
+                context.getString(R.string.pref_file_already_exists_default));
     }
 }

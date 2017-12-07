@@ -20,8 +20,8 @@ public class SShareMonitor implements SftpProgressMonitor {
     private static final String TAG = "SShareProgressMonitor";
     private static final long NOTIFICATION_UPDATE_THROTTLE_MILLIS = 500;
     private int notificationId = 1;
-    private NotificationCompat.Builder notificationBuilder;
-    private NotificationManager notificationManager;
+    private final NotificationCompat.Builder notificationBuilder;
+    private final NotificationManager notificationManager;
     private long totalUploaded = 0;
     private String fileName = "-";
     private long fileSize = -1;
@@ -31,13 +31,17 @@ public class SShareMonitor implements SftpProgressMonitor {
     public SShareMonitor(Context context) {
         // TODO: cancelable uploads
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Random r = new Random();
-        notificationId = r.nextInt(685463535); // lol
-        notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channelid));
-        notificationBuilder.setContentTitle("File Upload (SShare)")
-                .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
-                .setContentText("Preparing connection");
-        notificationManager.notify(notificationId, notificationBuilder.build());
+        if (notificationManager != null) {
+            Random r = new Random();
+            notificationId = r.nextInt(685463535); // lol
+            notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channelid));
+            notificationBuilder.setContentTitle("File Upload (SShare)")
+                    .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
+                    .setContentText("Preparing connection");
+            notificationManager.notify(notificationId, notificationBuilder.build());
+        } else {
+            Log.e(TAG, "Notification manager is null =(");
+        }
     }
 
     void setFileSize(long size) {
@@ -49,14 +53,8 @@ public class SShareMonitor implements SftpProgressMonitor {
     }
 
     private void updateNotificationSubText(String message) {
-        long now = System.currentTimeMillis();
-        if ((now - lastTick) < NOTIFICATION_UPDATE_THROTTLE_MILLIS) {
-            // Try not to throw around too many notification updates
-            Log.d(TAG, "nope");
-            return;
-        }
-        lastTick = now;
-        Log.d(TAG, "yep");
+
+
         notificationBuilder.setContentText(message);
         notificationManager.notify(notificationId, notificationBuilder.build());
     }
@@ -66,9 +64,15 @@ public class SShareMonitor implements SftpProgressMonitor {
             // we don't know the total size, bailing out
             return;
         }
-        // TODO: show ETA?
         totalUploaded = totalUploaded + uploadedData;
-        int uploadedPercent = (int) (100.0 * totalUploaded / fileSize + 0.5);
+        // TODO: show ETA?
+        long now = System.currentTimeMillis();
+        if ((now - lastTick) < NOTIFICATION_UPDATE_THROTTLE_MILLIS) {
+            // Try not to throw around too many notification updates
+            return;
+        }
+        lastTick = now;
+        int uploadedPercent = (int) ((100.0 * totalUploaded) / fileSize + 0.5);
         notificationBuilder.setProgress(100, uploadedPercent, false);
         notificationManager.notify(notificationId, notificationBuilder.build());
     }

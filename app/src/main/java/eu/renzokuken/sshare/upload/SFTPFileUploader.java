@@ -17,14 +17,28 @@ import java.util.Properties;
 
 import eu.renzokuken.sshare.persistence.Connection;
 
-import static com.jcraft.jsch.ChannelSftp.OVERWRITE;
 
 public class SFTPFileUploader extends FileUploader {
     private static final String TAG = "SFTPFileUploader";
-    private int sftpMode = OVERWRITE; // TODO
+    private int sftpMode;
+
 
     public SFTPFileUploader(Context context) {
         super(context);
+        setSFTPMode();
+    }
+
+    private void setSFTPMode() {
+        String val = getOverwritePref();
+
+        switch (val) {
+            case "0":
+                sftpMode = ChannelSftp.OVERWRITE;
+                break;
+            case "1":
+                sftpMode = ChannelSftp.RESUME;
+                break;
+        }
     }
 
     public void _uploadFile(Connection connection, Uri fileUri, SShareMonitor monitor) throws SShareUploadException {
