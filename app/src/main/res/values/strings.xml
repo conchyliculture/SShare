@@ -25,4 +25,5 @@
     <!-- Example settings for Notifications -->
 
     <string name="create_connection">\"Create New Connection\"</string>
+    <string name="notification_channelid">sshare_notification</string>
 </resources>

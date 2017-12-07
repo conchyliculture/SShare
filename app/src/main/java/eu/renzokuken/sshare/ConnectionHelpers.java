@@ -17,6 +17,7 @@ public class ConnectionHelpers {
     public static final String DEFAULT_AUTH_MODE = AUTH_LP;
 
     // Order is important
+    // TODO: do the enum magic
     final public static ArrayList<String> PROTOCOL_IDENTIFIERS = new ArrayList<>(Collections.singletonList(MODE_SFTP));
     final public static ArrayList<String> AUTHENTICATION_IDENTIFIERS = new ArrayList<>(Arrays.asList(AUTH_LP, AUTH_KEY));
 
