@@ -20,7 +20,7 @@ public class SShareMonitor implements SftpProgressMonitor {
     private static final String TAG = "SShareProgressMonitor";
     private static final long NOTIFICATION_UPDATE_THROTTLE_MILLIS = 500;
     private int notificationId = 1;
-    private final NotificationCompat.Builder notificationBuilder;
+    private NotificationCompat.Builder notificationBuilder;
     private final NotificationManager notificationManager;
     private long totalUploaded = 0;
     private String fileName = "-";

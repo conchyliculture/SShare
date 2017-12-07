@@ -38,6 +38,7 @@ public class ConnectionListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         List<Connection> connectionList = getConnectionList();
+        // TODO  make something better than simple_list_item_1
         ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1, connectionList);
         setListAdapter(connectionListAdapter);
         ListView listView = getListView();
@@ -86,6 +87,7 @@ public class ConnectionListFragment extends ListFragment {
 
             if (fileUploader != null) {
                 fileUploader.uploadFile(connection, fileURI, monitor);
+                getActivity().finish();
             }
         }
     }
