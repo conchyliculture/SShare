@@ -84,4 +84,11 @@ public abstract class FileUploader {
                 context.getString(R.string.pref_file_already_exists),
                 context.getString(R.string.pref_file_already_exists_default));
     }
+
+    String getHostKeyCheckingPref() {
+        return this.preferences.getString(
+                context.getString(R.string.pref_host_key_checking_mode),
+                context.getString(R.string.pref_host_key_checking_mode_default));
+    }
+
 }

@@ -53,8 +53,6 @@ public class SShareMonitor implements SftpProgressMonitor {
     }
 
     private void updateNotificationSubText(String message) {
-
-
         notificationBuilder.setContentText(message);
         notificationManager.notify(notificationId, notificationBuilder.build());
     }
@@ -79,6 +77,7 @@ public class SShareMonitor implements SftpProgressMonitor {
 
     @Override
     public void init(int op, String src, String dest, long max) {
+        updateNotificationSubText("Uploading...");
     }
 
     @Override

@@ -26,15 +26,27 @@
 
 
     <string name="pref_file_already_exists">When a file already exists</string>
-    <!-- DON'T CHANGE THESE -->
     <string-array name="pref_file_already_exists_titles">
         <item>Overwrite</item>
         <item>Skip</item>
     </string-array>
+    <!-- DON'T CHANGE THESE -->
     <string-array name="pref_file_already_exists_values">
-        <item>0</item>
-        <item>1</item>
+        <item>OVERWRITE</item>
+        <item>SKIP</item>
     </string-array>
     <string name="pref_file_already_exists_default">0</string>
+
+     <string name="pref_host_key_checking_mode">Host pubkey check mode</string>
+    <string-array name="pref_host_key_checking_mode_titles">
+        <item>Strict Check (Ask)</item>
+        <item>No Check</item>
+    </string-array>
+    <!-- DON'T CHANGE THESE -->
+    <string-array name="pref_host_key_checking_mode_values">
+        <item>STRICT</item>
+        <item>NO</item>
+    </string-array>
+    <string name="pref_host_key_checking_mode_default">STRICT</string>
 
 </resources>

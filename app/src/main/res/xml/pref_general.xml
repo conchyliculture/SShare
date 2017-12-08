@@ -9,6 +9,15 @@
         android:entryValues="@array/pref_file_already_exists_values"
         android:defaultValue="@string/pref_file_already_exists_default"
         android:title="@string/pref_file_already_exists" />
+    <ListPreference
+        android:id="@+id/host_key_check_pref"
+        android:key="@string/pref_host_key_checking_mode"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:entries="@array/pref_host_key_checking_mode_titles"
+        android:entryValues="@array/pref_host_key_checking_mode_values"
+        android:defaultValue="@string/pref_host_key_checking_mode_default"
+        android:title="@string/pref_host_key_checking_mode" />
 
     <!--SwitchPreference
         android:defaultValue="true"

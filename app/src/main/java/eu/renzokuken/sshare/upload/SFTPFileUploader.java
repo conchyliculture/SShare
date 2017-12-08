@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.HostKey;
+import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -25,20 +27,18 @@ public class SFTPFileUploader extends FileUploader {
 
     public SFTPFileUploader(Context context) {
         super(context);
-        setSFTPMode();
     }
 
-    private void setSFTPMode() {
+    private int getSFTPMode() {
         String val = getOverwritePref();
 
         switch (val) {
             case "0":
-                sftpMode = ChannelSftp.OVERWRITE;
-                break;
+                return ChannelSftp.OVERWRITE;
             case "1":
-                sftpMode = ChannelSftp.RESUME;
-                break;
+                return ChannelSftp.RESUME;
         }
+        return 0;
     }
 
     public void _uploadFile(Connection connection, Uri fileUri, SShareMonitor monitor) throws SShareUploadException {
@@ -54,21 +54,42 @@ public class SFTPFileUploader extends FileUploader {
             Log.d(TAG, "Starting SFTP Connection");
             Session session = jsch.getSession(username, host, connection.port);
             session.setPassword(connection.password);
+
             // jsch.setKnownHosts(khfile);
             // jsch.addIdentity(identityfile);
 
-            Properties prop = new Properties();
-            prop.put("StrictHostKeyChecking", "no"); // TODO
-            session.setConfig(prop);
 
-            session.connect();
+            try {
+                session.connect();
+            } catch (JSchException jSchException) {
+                HostKey hk = session.getHostKey();
+                if (! (hk == null)) {
+                    Log.d(TAG, "HostKey: " +
+                            hk.getHost() + " " +
+                            hk.getType() + " " +
+                            hk.getFingerPrint(jsch));
+                } else {
+                    Log.d(TAG, "aww hk is null");
+                }
+                switch (getHostKeyCheckingPref()) {
+                    case "STRICT":
+                        HostKeyRepository hkr = jsch.getHostKeyRepository();
+                        break;
+                    case "NO":
+                        Properties prop = new Properties();
+                        prop.put("StrictHostKeyChecking", "no");
+                        session.setConfig(prop);
+                        Log.d(TAG,"No check");
+                        break;
+                }
+            }
 
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp sftpChannel = (ChannelSftp)channel;
             try {
                 InputStream sourceStream = context.getContentResolver().openInputStream(fileUri);
-                sftpChannel.put(sourceStream, destinationPath, monitor, sftpMode);
+                sftpChannel.put(sourceStream, destinationPath, monitor, getSFTPMode());
             } catch (FileNotFoundException e) {
                 throw new SShareUploadException("Couldn't find file "+fileUri, e);
             } catch (SftpException e) {
