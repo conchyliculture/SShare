@@ -5,7 +5,6 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import android.database.Cursor;
 
 import java.util.List;
 
@@ -30,6 +29,19 @@ public interface MyDao {
     @Query("SELECT * FROM connection WHERE id = :connectionId")
     Connection getConnectionById(int connectionId);
 
-    @Query("SELECT * FROM connection")
-    Cursor getAllConnectionsCurs();
+    @Insert
+    void addHostKey(HostKeyInfo... hostKey);
+
+    @Update
+    void updateHostKey(HostKeyInfo... hostKey);
+
+    @Delete
+    void deleteHostKey(HostKeyInfo... hostKey);
+
+    @Query("SELECT * FROM HostKeyInfo WHERE hostname = :hostname and type = :type")
+    HostKeyInfo getHostKeyInfo(String hostname, String type);
+
+    @Query("SELECT * FROM HostKeyInfo")
+    List<HostKeyInfo> getAllHostKeys();
+
 }

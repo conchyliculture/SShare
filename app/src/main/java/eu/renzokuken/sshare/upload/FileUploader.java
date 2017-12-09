@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
+import android.widget.Toast;
 
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
@@ -65,11 +67,13 @@ public abstract class FileUploader {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 try {
                     _uploadFile(connection, fileUri, monitor);
                 } catch (SShareUploadException e) {
                     e.printStackTrace();
                     monitor.error(e.getMessage(), e);
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }).start();

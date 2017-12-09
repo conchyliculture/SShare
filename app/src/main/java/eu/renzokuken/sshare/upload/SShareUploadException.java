@@ -9,4 +9,8 @@ class SShareUploadException extends Exception {
     {
         super(message, cause);
     }
+
+    public SShareUploadException(String message) {
+        super(message);
+    }
 }

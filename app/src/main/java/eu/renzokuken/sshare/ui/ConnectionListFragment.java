@@ -87,7 +87,7 @@ public class ConnectionListFragment extends ListFragment {
 
             if (fileUploader != null) {
                 fileUploader.uploadFile(connection, fileURI, monitor);
-                getActivity().finish();
+                // getActivity().finish();
             }
         }
     }

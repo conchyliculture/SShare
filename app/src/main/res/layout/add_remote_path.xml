@@ -35,9 +35,9 @@
             android:id="@+id/input_remote_path"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="hint"
+            android:hint="Leave empty to use the user home directory"
             android:inputType="text"
-            android:text="~/" />
+            android:text="" />
     </android.support.design.widget.TextInputLayout>
 
 </android.support.constraint.ConstraintLayout>

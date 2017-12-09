@@ -8,7 +8,7 @@ import android.content.Context;
 /**
  * Created by renzokuken on 04/12/17.
  */
-@Database(entities = {Connection.class}, version = 1, exportSchema = false)
+@Database(entities = {Connection.class, HostKeyInfo.class}, version = 1, exportSchema = false)
 public abstract class MyDB extends RoomDatabase {
     private static MyDB INSTANCE;
 
