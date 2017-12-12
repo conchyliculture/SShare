@@ -17,7 +17,7 @@
     </string-array>
 
     <string name="create_connection">\"Create New Connection\"</string>
-    <string name="notification_channelid">sshare_notification</string>
+    <string name="notification_channel_id">sshare_notification</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
@@ -37,7 +37,7 @@
     </string-array>
     <string name="pref_file_already_exists_default">0</string>
 
-     <string name="pref_host_key_checking_mode">Host pubkey check mode</string>
+    <string name="pref_host_key_checking_mode">Host key check mode</string>
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>
         <item>No Check</item>

@@ -25,6 +25,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -32,10 +33,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NewAccountActivity" />
-
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
+
+        <service android:name=".upload.FileUploaderService" />
+
     </application>
 
 </manifest>

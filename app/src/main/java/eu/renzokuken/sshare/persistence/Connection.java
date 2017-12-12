@@ -28,4 +28,7 @@ public class Connection implements Serializable {
         return this.protocol+"://"+this.username+"@"+this.hostname+":"+this.remotePath;
     }
 
+    public String getHostString() {
+        return "["+hostname+":"+this.port+"]";
+    }
 }
