@@ -7,13 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,6 @@ import eu.renzokuken.sshare.upload.FileUploaderService;
 
 public class ConnectionListFragment extends ListFragment {
 
-    private static final String TAG = "ConnectionListFragment";
-
     private List<Connection> getConnectionList() {
         MainActivity a = (MainActivity) getActivity();
         return a.getConnectionList();
@@ -36,11 +32,7 @@ public class ConnectionListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Need to remove outdated BouncyCastle Android crap, and insert SpongyCastle
-        Security.removeProvider("BC");
-        //Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-        Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
-        Log.d(TAG, "did the magic security dance");
+
         List<Connection> connectionList = getConnectionList();
         // TODO  make something better than simple_list_item_1
         ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1, connectionList);
@@ -50,9 +42,9 @@ public class ConnectionListFragment extends ListFragment {
         String action = intent.getAction();
 
         if (Intent.ACTION_SEND.equals(action)) {
-            listView.setOnItemClickListener(new UploadFileServiceOnItemClickListener(intent));
+            listView.setOnItemClickListener(new UploadFileOnItemClickListener(intent));
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-            listView.setOnItemClickListener(new UploadFileServiceOnItemClickListener(intent));
+            listView.setOnItemClickListener(new UploadFileOnItemClickListener(intent));
         } else {
             listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
         }
@@ -77,10 +69,10 @@ public class ConnectionListFragment extends ListFragment {
         }
     }
 
-    private class UploadFileServiceOnItemClickListener implements AdapterView.OnItemClickListener {
+    private class UploadFileOnItemClickListener implements AdapterView.OnItemClickListener {
         private final ArrayList<Uri> fileURIs = new ArrayList<>();
 
-        public UploadFileServiceOnItemClickListener(Intent intent) {
+        public UploadFileOnItemClickListener(Intent intent) {
             if (Intent.ACTION_SEND.equals(intent.getAction())) {
                 fileURIs.add((Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
@@ -94,12 +86,11 @@ public class ConnectionListFragment extends ListFragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
             for (Uri fileURI:fileURIs) {
-                Log.i(TAG, "Uploading " + fileURI + " to " + connection.toString());
                 Intent intent = new Intent(getActivity(), FileUploaderService.class);
                 intent.putExtra("fileURI", fileURI);
                 intent.putExtra("connection", connection);
                 getActivity().startService(intent);
-
+                getActivity().finish();
             }
         }
     }

@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.security.Security;
+
 import eu.renzokuken.sshare.ConnectionHelpers;
 import eu.renzokuken.sshare.persistence.Connection;
 
@@ -16,6 +18,13 @@ import eu.renzokuken.sshare.persistence.Connection;
 public class FileUploaderService extends IntentService {
 
     private static final String TAG = "FileUploaderService";
+
+    static {
+        // Need to remove outdated BouncyCastle Android crap, and insert SpongyCastle
+        Security.removeProvider("BC");
+        //Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+        Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+    }
 
     public FileUploaderService() {
         super(TAG);
@@ -38,9 +47,9 @@ public class FileUploaderService extends IntentService {
         Monitor monitor = new Monitor(this, fileUri);
 
         if (connection.protocol.equals(ConnectionHelpers.MODE_SFTP)) {
-            SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, monitor); // important d'avoir l'app context
+            SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, connection, monitor); // important d'avoir l'app context
             try {
-                fileUploader.uploadFile(connection, fileUri);
+                fileUploader.uploadFile(fileUri);
             } catch (SShareUploadException e) {
                 e.printStackTrace();
                 monitor.error(e.getMessage(), e);

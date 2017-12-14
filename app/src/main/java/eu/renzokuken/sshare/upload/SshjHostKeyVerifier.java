@@ -31,15 +31,11 @@ class SshjHostKeyVerifier implements HostKeyVerifier {
     public boolean verify(String hostname, int port, PublicKey key) {
         lastSeenKey = key;
         String fingerPrint = SecurityUtils.getFingerprint(key);
-        Log.d(TAG, "Verifying "+fingerPrint);
         HostKeyInfo storedHostKey = dbConnection.getHostKeyInfo("["+hostname+":"+port+"]", key.getAlgorithm());
         if (storedHostKey == null) {
             Log.d(TAG, "On a pas la clé =(");
             return false;
         }
-        Log.d(TAG, "'"+fingerPrint+"'=='"+storedHostKey.keyString+"'");
-        boolean result = fingerPrint.equals(storedHostKey.keyString);
-        Log.d(TAG, "c'est "+result);
         return fingerPrint.equals(storedHostKey.keyString);
     }
 

@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
@@ -22,7 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         FloatingActionButton fab = findViewById(R.id.addConnectionFab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -32,18 +34,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
-    public List<Connection> getConnectionList() {
+    public ArrayList<Connection> getConnectionList() {
         MyDB database = MyDB.getDatabase(getApplicationContext());
-        return database.connectionDao().getAllConnections();
+        return new ArrayList<>(database.connectionDao().getAllConnections());
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        List<Connection> connectionList = getConnectionList();
+        ArrayList<Connection> connectionList = getConnectionList();
 
         if (connectionList.isEmpty()) {
             TextView noConnectionTextView = findViewById(R.id.no_connection_textview);
@@ -82,4 +85,5 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

@@ -39,6 +39,9 @@
 
         <service android:name=".upload.FileUploaderService" />
 
+        <activity
+            android:name=".ui.PopupActivity"
+            android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
     </application>
 
 </manifest>

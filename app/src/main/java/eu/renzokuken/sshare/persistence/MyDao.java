@@ -20,28 +20,28 @@ public interface MyDao {
     @Update
     void updateConnection(Connection... connections);
 
-    @Delete
-    void deleteConnection(Connection... connections);
+//    @Delete
+//    void deleteConnection(Connection... connections);
 
     @Query("SELECT * FROM connection")
     List<Connection> getAllConnections();
 
-    @Query("SELECT * FROM connection WHERE id = :connectionId")
-    Connection getConnectionById(int connectionId);
-
     @Insert
     void addHostKey(HostKeyInfo... hostKey);
 
-    @Update
-    void updateHostKey(HostKeyInfo... hostKey);
+//    @Update
+//    void updateHostKey(HostKeyInfo... hostKey);
 
-    @Delete
-    void deleteHostKey(HostKeyInfo... hostKey);
+//    @Delete
+//    void deleteHostKey(HostKeyInfo... hostKey);
+
+//    @Query("DELETE FROM HostKeyInfo")
+//    void truncateHostKeyInfo();
 
     @Query("SELECT * FROM HostKeyInfo WHERE hostname = :hostname and type = :type")
     HostKeyInfo getHostKeyInfo(String hostname, String type);
 
-    @Query("SELECT * FROM HostKeyInfo")
-    List<HostKeyInfo> getAllHostKeys();
+//    @Query("SELECT * FROM HostKeyInfo")
+//    List<HostKeyInfo> getAllHostKeys();
 
 }

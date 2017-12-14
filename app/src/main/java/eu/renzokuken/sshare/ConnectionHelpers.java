@@ -23,9 +23,9 @@ public class ConnectionHelpers {
 
 
     public static int getProtocolPosFromName(Context context, String name) {
-        String[] prots = context.getResources().getStringArray(R.array.protocol_modes);
-        for (int i = 0; i < prots.length; i++) {
-            if (prots[i].equals(name)) {
+        String[] protocols = context.getResources().getStringArray(R.array.protocol_modes);
+        for (int i = 0; i < protocols.length; i++) {
+            if (protocols[i].equals(name)) {
                 return i;
             }
         }
@@ -33,9 +33,9 @@ public class ConnectionHelpers {
     }
 
     public static int getAuthenticationPosFromName(Context context, String name) {
-        String[] auths = context.getResources().getStringArray(R.array.authentication_modes);
-        for (int i = 0; i < auths.length; i++) {
-            if (auths[i].equals(name)) {
+        String[] authenticationModes = context.getResources().getStringArray(R.array.authentication_modes);
+        for (int i = 0; i < authenticationModes.length; i++) {
+            if (authenticationModes[i].equals(name)) {
                 return i;
             }
         }

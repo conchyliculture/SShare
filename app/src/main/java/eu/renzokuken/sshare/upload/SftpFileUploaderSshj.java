@@ -2,6 +2,7 @@ package eu.renzokuken.sshare.upload;
 
 import android.content.Context;
 
+import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.sftp.SFTPClient;
@@ -18,11 +19,11 @@ import eu.renzokuken.sshare.persistence.Connection;
 
 class SftpFileUploaderSshj extends FileUploaderSshj {
 
-    SftpFileUploaderSshj(Context context, Monitor monitor) {
-        super(context, monitor);
+    SftpFileUploaderSshj(Context context, Connection connection, Monitor monitor) {
+        super(context, connection, monitor);
     }
 
-    public void _Push(Connection connection, FileUri fileUri) throws SShareUploadException {
+    public void _Push(SSHClient ssh, FileUri fileUri) throws SShareUploadException {
 
         MyTransferListener transferListener = new MyTransferListener();
         transferListener.setMonitor(this.monitor);
@@ -53,8 +54,12 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
         } catch (IOException e) {
             e.printStackTrace();
             throw new SShareUploadException("Connection closed unexpectedly", e);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            throw new SShareUploadException("Permission error", e);
         }
     }
+
 
     private class SSHJLocalSourceFile implements LocalSourceFile {
         // TODO extends parent class?
