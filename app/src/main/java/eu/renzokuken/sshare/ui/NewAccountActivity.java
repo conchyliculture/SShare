@@ -1,36 +1,37 @@
 package eu.renzokuken.sshare.ui;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.ViewSwitcher;
 
-import eu.renzokuken.sshare.ConnectionHelpers;
+import java.io.File;
+import java.util.ArrayList;
+
+import eu.renzokuken.sshare.ConnectionConstants;
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 import eu.renzokuken.sshare.persistence.MyDB;
 
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static eu.renzokuken.sshare.ConnectionConstants.AuthenticationMethod.ENUM_AUTH_KEY;
+import static eu.renzokuken.sshare.ConnectionConstants.AuthenticationMethod.ENUM_AUTH_LP;
+import static eu.renzokuken.sshare.ConnectionConstants.ProtocolMethod.ENUM_PROTO_SFTP;
 
 public class NewAccountActivity extends AppCompatActivity {
 
-    private static final String TAG = "NewAccountActivity";
-    private LinearLayout container;
     private Connection connection;
     private MyDB database;
 
-    private Spinner authSpinner;
-    private Spinner protocolSpinner;
+    private Button selectKeyButton;
     private Button submitButton;
     private TextInputEditText inputHostname;
     private TextInputEditText inputPort;
@@ -39,7 +40,7 @@ public class NewAccountActivity extends AppCompatActivity {
     private TextInputEditText inputRemotePath;
 
     private boolean isAddingNewConnection = true;
-    private String authMode = ConnectionHelpers.DEFAULT_AUTH_MODE;
+    private ConnectionConstants.AuthenticationMethod authModeSelected = ENUM_AUTH_LP;
     private final TextWatcher globalTextChangedWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -54,10 +55,8 @@ public class NewAccountActivity extends AppCompatActivity {
         public void afterTextChanged(Editable editable) {
         }
     };
-    private ViewGroup credentialsLayout;
-    private ViewGroup remotePathLayout;
-    private ViewGroup hostnamePortLayout;
-    private ViewGroup authModeLayout;
+    private ConnectionConstants.ProtocolMethod protocolSelected = ENUM_PROTO_SFTP;
+    private File privateKeyFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +65,152 @@ public class NewAccountActivity extends AppCompatActivity {
 
         if (b != null) {
             this.connection = (Connection) b.getSerializable("connection");
-            if (this.connection == null) {
-                this.connection = new Connection();
+            if (this.connection != null) {
+                isAddingNewConnection = false;
             }
-            isAddingNewConnection = false;
         }
 
-        setContentView(R.layout.add_activity);
-        this.container = findViewById(R.id.addcontainer);
+        if (this.connection == null) {
+            this.connection = new Connection();
+            this.connection.auth_mode = ConnectionConstants.DEFAULT_AUTH_MODE;
+        }
+
+        setContentView(R.layout.activity_add_connection);
         database = MyDB.getDatabase(getApplicationContext());
-        showProtocol();
+
+        // Set protocol chooser.
+        Spinner protocolSpinner = findViewById(R.id.spinner_protocols);
+        final ArrayAdapter<String> connectionProtocolsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        for (ConnectionConstants.ProtocolMethod a : ConnectionConstants.ProtocolMethod.values()) {
+            connectionProtocolsAdapter.add(a.getText(this));
+        }
+
+        connectionProtocolsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        protocolSpinner.setAdapter(connectionProtocolsAdapter);
+        protocolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                protocolSelected = ConnectionConstants.ProtocolMethod.findById(i);
+                connection.protocol = protocolSelected.getDbKey();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        // Set authentication mode chooser.
+        final ViewSwitcher authModeSwitcher = findViewById(R.id.auth_mode_switcher);
+        Spinner authSpinner = findViewById(R.id.spinner_auth);
+        final ArrayAdapter<String> authModeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        for (ConnectionConstants.AuthenticationMethod a : ConnectionConstants.AuthenticationMethod.values()) {
+            authModeAdapter.add(a.getText(this));
+        }
+        authModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        authSpinner.setAdapter(authModeAdapter);
+        authSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                authModeSwitcher.setDisplayedChild(i);
+                authModeSelected = ConnectionConstants.AuthenticationMethod.findById(i);
+                connection.auth_mode = authModeSelected.getDbKey();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        // Set hostname & port chooser.
+        inputHostname = findViewById(R.id.input_hostname);
+        inputHostname.addTextChangedListener(globalTextChangedWatcher);
+        inputPort = findViewById(R.id.input_port);
+        inputPort.addTextChangedListener(globalTextChangedWatcher);
+
+        // Set login & password view
+        inputLogin = findViewById(R.id.input_login);
+        inputLogin.addTextChangedListener(globalTextChangedWatcher);
+        inputPassword = findViewById(R.id.input_password);
+        inputPassword.addTextChangedListener(globalTextChangedWatcher);
+
+        selectKeyButton = findViewById(R.id.select_key_button);
+        selectKeyButton.addTextChangedListener(globalTextChangedWatcher);
+        selectKeyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(NewAccountActivity.this);
+                // TODO: get a nice icon
+                // builderSingle.setIcon(R.drawable.ic_launcher);
+                builderSingle.setTitle("Select Key");
+                final ArrayList<File> keyFilesList = ManagePubKeysActivity.getPubKeysList(NewAccountActivity.this);
+                final ArrayAdapter<String> keyFilesAdapter = new ArrayAdapter<>(NewAccountActivity.this, android.R.layout.select_dialog_singlechoice);
+                for (File key : keyFilesList) {
+                    keyFilesAdapter.add(key.getName());
+                }
+                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builderSingle.setAdapter(keyFilesAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        privateKeyFile = keyFilesList.get(which);
+                        selectKeyButton.setText(privateKeyFile.getName());
+                    }
+                });
+                builderSingle.show();
+            }
+        });
+
+        inputRemotePath = findViewById(R.id.input_remote_path);
+        inputRemotePath.addTextChangedListener(globalTextChangedWatcher);
+
+        submitButton = findViewById(R.id.submit_button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                connection.hostname = inputHostname.getText().toString();
+                connection.port = Integer.parseInt(inputPort.getText().toString());
+                connection.username = inputLogin.getText().toString();
+                switch (authModeSelected) {
+                    case ENUM_AUTH_LP:
+                        connection.password = inputPassword.getText().toString();
+                        break;
+                    case ENUM_AUTH_KEY:
+                        connection.key = privateKeyFile.getPath();
+                        break;
+                }
+                connection.remotePath = inputRemotePath.getText().toString();
+                if (isAddingNewConnection) {
+                    database.connectionDao().addConnection(connection);
+                } else {
+                    database.connectionDao().updateConnection(connection);
+                }
+                finish();
+            }
+        });
+
+        if (!isAddingNewConnection) {
+            protocolSpinner.setSelection(ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol).getId());
+            authSpinner.setSelection(ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode).getId());
+            inputHostname.setText(connection.hostname);
+            inputPort.setText(String.valueOf(connection.port));
+            switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
+                case ENUM_AUTH_LP:
+                    inputLogin.setText(connection.username);
+                    inputPassword.setText(connection.password);
+                    break;
+                case ENUM_AUTH_KEY:
+                    privateKeyFile = new File(connection.key);
+                    String buttonMsg = "Change key (current: " + privateKeyFile.getName() + ")";
+                    selectKeyButton.setText(buttonMsg);
+                    break;
+            }
+            inputRemotePath.setText(connection.remotePath);
+            submitButton.setText(R.string.update_connection);
+        }
     }
 
     private boolean isFormValid() {
@@ -85,11 +220,15 @@ public class NewAccountActivity extends AppCompatActivity {
                 return false;
             if (inputPort.getText().toString().equals(""))
                 return false;
-            if (authMode.equals(ConnectionHelpers.AUTH_LP)) {
+            if (authModeSelected.equals(ENUM_AUTH_LP)) {
                 if (inputPassword.getText().toString().equals(""))
                     return false;
                 if (inputLogin.getText().toString().equals(""))
                     return false;
+            } else if (authModeSelected.equals(ENUM_AUTH_KEY)) {
+                if (selectKeyButton.getText().toString().equals(getString(R.string.select_key_message_button))) {
+                    return false;
+                }
             }
         } catch (NullPointerException e) {
             return false;
@@ -100,151 +239,5 @@ public class NewAccountActivity extends AppCompatActivity {
     private void validateForm() {
         if (submitButton != null)
             submitButton.setEnabled(isFormValid());
-    }
-
-    private void showProtocol() {
-        ViewGroup protocolLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_protocol, container, true);
-
-        protocolSpinner = findViewById(R.id.spinner_mode);
-        final ArrayAdapter<CharSequence> connectionModesAdapter = ArrayAdapter.createFromResource(this,
-                R.array.protocol_modes, android.R.layout.simple_spinner_item);
-
-        hostnamePortLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_hostname_port, protocolLayout, true);
-        inputHostname = hostnamePortLayout.findViewById(R.id.input_hostname);
-        inputHostname.addTextChangedListener(globalTextChangedWatcher);
-        inputPort = hostnamePortLayout.findViewById(R.id.input_port);
-        inputPort.addTextChangedListener(globalTextChangedWatcher);
-
-        if (!isAddingNewConnection) {
-            inputHostname.setText(connection.hostname);
-            inputPort.setText(String.valueOf(connection.port));
-        }
-
-        connectionModesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        protocolSpinner.setAdapter(connectionModesAdapter);
-        if (this.connection != null) {
-            protocolSpinner.setSelection(ConnectionHelpers.getProtocolPosFromName(this, connection.protocol));
-        }
-
-        protocolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String modeSelected = (String) connectionModesAdapter.getItem(i);
-                switch (i) {
-                    case 0:
-                        showSFTP();
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown protocol " + modeSelected);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                //lol
-            }
-        });
-    }
-
-    private void showSFTP() {
-        authModeLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_auth_mode, hostnamePortLayout, true);
-
-        authSpinner = findViewById(R.id.spinner_auth);
-
-        final ArrayAdapter<CharSequence> authModeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.authentication_modes, android.R.layout.simple_spinner_item);
-
-        authModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        authSpinner.setAdapter(authModeAdapter);
-        if (this.connection != null) {
-            authSpinner.setSelection(ConnectionHelpers.getAuthenticationPosFromName(this, connection.auth_mode));
-        }
-        authSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String modeSelected = (String) authModeAdapter.getItem(i);
-                switch (i) {
-                    case 0:
-                        showLoginPassword();
-                        break;
-                    case 1:
-                        showPubKey();
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown auth method " + modeSelected + " " + l);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // LOL
-            }
-        });
-    }
-
-    private void showLoginPassword() {
-        authMode = ConnectionHelpers.AUTH_LP;
-        credentialsLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_login_pwd, authModeLayout, true);
-        inputLogin = credentialsLayout.findViewById(R.id.input_login);
-        inputLogin.addTextChangedListener(globalTextChangedWatcher);
-        inputPassword = credentialsLayout.findViewById(R.id.input_password);
-        inputPassword.addTextChangedListener(globalTextChangedWatcher);
-
-        if (this.connection != null) {
-            inputLogin.setText(connection.username);
-            inputPassword.setText(connection.password);
-        }
-
-        showRemotePath();
-    }
-
-    private void showPubKey() {
-        authMode = ConnectionHelpers.AUTH_KEY;
-    }
-
-    private void showRemotePath() {
-        remotePathLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.add_remote_path, credentialsLayout, true);
-        inputRemotePath = remotePathLayout.findViewById(R.id.input_remote_path);
-        inputRemotePath.addTextChangedListener(globalTextChangedWatcher);
-        showSubmitButton();
-    }
-
-    private void showSubmitButton() {
-        getLayoutInflater().inflate(R.layout.add_submit, remotePathLayout, true);
-        submitButton = findViewById(R.id.submit_button);
-        if (isAddingNewConnection) {
-            submitButton.setText(R.string.create_connection);
-        }
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isAddingNewConnection) {
-                    connection = new Connection();
-                }
-                connection.protocol = ConnectionHelpers.PROTOCOL_IDENTIFIERS.get(protocolSpinner.getSelectedItemPosition());
-                connection.hostname = inputHostname.getText().toString();
-                connection.port = Integer.parseInt(inputPort.getText().toString());
-                connection.auth_mode = ConnectionHelpers.AUTHENTICATION_IDENTIFIERS.get(authSpinner.getSelectedItemPosition());
-                switch (connection.auth_mode) {
-                    case ConnectionHelpers.AUTH_LP:
-                        connection.username = inputLogin.getText().toString();
-                        connection.password = inputPassword.getText().toString();
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown auth mode " + connection.auth_mode);
-                        break;
-                }
-                connection.remotePath = inputRemotePath.getText().toString();
-                if (isAddingNewConnection) {
-                    database.connectionDao().addConnection(connection);
-                } else {
-                    database.connectionDao().updateConnection(connection);
-                }
-                Intent intent = new Intent(NewAccountActivity.this, MainActivity.class);
-                intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        });
     }
 }

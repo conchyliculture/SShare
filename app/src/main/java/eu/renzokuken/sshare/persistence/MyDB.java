@@ -12,15 +12,13 @@ import android.content.Context;
 public abstract class MyDB extends RoomDatabase {
     private static MyDB INSTANCE;
 
-    public abstract MyDao connectionDao();
-
     public static MyDB getDatabase(Context context) {
         if (INSTANCE == null) {
-            //context.deleteDatabase("database");
-
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     MyDB.class, "database").allowMainThreadQueries().build();
         }
         return INSTANCE;
     }
+
+    public abstract MyDao connectionDao();
 }

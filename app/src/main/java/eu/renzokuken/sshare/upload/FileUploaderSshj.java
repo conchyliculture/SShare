@@ -1,7 +1,6 @@
 package eu.renzokuken.sshare.upload;
 
 import android.content.Context;
-
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -13,12 +12,16 @@ import net.schmizz.sshj.common.SecurityUtils;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
+import net.schmizz.sshj.userauth.method.AuthMethod;
+import net.schmizz.sshj.userauth.method.AuthPassword;
+import net.schmizz.sshj.userauth.method.AuthPublickey;
+import net.schmizz.sshj.userauth.password.PasswordUtils;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.PublicKey;
 
-import eu.renzokuken.sshare.ConnectionHelpers;
+import eu.renzokuken.sshare.ConnectionConstants;
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 import eu.renzokuken.sshare.ui.PopupActivity;
@@ -29,7 +32,7 @@ import eu.renzokuken.sshare.ui.PopupActivity;
  */
 
 abstract class FileUploaderSshj {
-    private static final String TAG =  "FileUploader";
+    private static final String TAG = "FileUploader";
     final Context context;
     final Monitor monitor;
     private final Connection connection;
@@ -38,8 +41,6 @@ abstract class FileUploaderSshj {
         this.monitor = monitor;
         this.context = context;
         this.connection = connection;
-        // Do specific android stuff
-
     }
 
     private String getHostKeyCheckingPref() {
@@ -59,7 +60,6 @@ abstract class FileUploaderSshj {
                 default:
                     ssh.addHostKeyVerifier(sshjHostKeyVerifier);
             }
-            Log.d(TAG, "_Connect "+ssh);
             ssh.connect(connection.hostname, connection.port);
         } catch (ConnectException e) {
             throw new SShareUploadException("Connection timeout to" + connection.getHostString() + "Check hostname & port", e);
@@ -74,18 +74,16 @@ abstract class FileUploaderSshj {
                     throw new SShareUploadException("Didn't accept key", e);
                 }
             } else {
-                e.printStackTrace();
-                throw new SShareUploadException("Error connecting to " + connection.getHostString(), e);
+                throw new SShareUploadException("Disconnected from " + connection.getHostString(), e);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new SShareUploadException("Error connecting to " + connection.getHostString() + ": " + e.getLocalizedMessage(), e);
         }
-
         return ssh;
     }
 
     private boolean askUser(String question) {
-        Log.d(TAG, "Asking "+question);
+        Log.d(TAG, "Asking " + question);
 
         Intent intent = new Intent(context, PopupActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -109,29 +107,33 @@ abstract class FileUploaderSshj {
 
     private void _Authenticate(SSHClient ssh) throws SShareUploadException {
         monitor.updateNotificationSubText("Authenticating to " + connection.toString());
+        AuthMethod authMethod = null;
+
+        switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
+            case ENUM_AUTH_KEY:
+                try {
+                    authMethod = new AuthPublickey(ssh.loadKeys(connection.key));
+                } catch (IOException e) {
+                    throw new SShareUploadException("Unable to load key " + connection.key, e);
+                }
+                break;
+            case ENUM_AUTH_LP:
+                authMethod = new AuthPassword(PasswordUtils.createOneOff(connection.password.toCharArray()));
+                break;
+        }
         try {
-            switch (connection.auth_mode) {
-                case ConnectionHelpers.AUTH_KEY:
-                    // TODO
-                    Log.d(TAG, "Public key auth not implemented");
-                    break;
-                case ConnectionHelpers.AUTH_LP:
-                    ssh.authPassword(connection.username, connection.password);
-                    break;
-            }
+            ssh.auth(connection.username, authMethod);
         } catch (UserAuthException e) {
-            e.printStackTrace();
             throw new SShareUploadException("Could not login. Check your credentials", e);
         } catch (TransportException e) {
-            e.printStackTrace();
+            throw new SShareUploadException("Transport Error", e);
         }
     }
-    
+
     private void _Cleanup(SSHClient ssh) throws SShareUploadException {
         try {
             ssh.disconnect();
         } catch (IOException e) {
-            e.printStackTrace();
             throw new SShareUploadException("Error during cleanup", e);
         }
         monitor.finish();
@@ -148,6 +150,4 @@ abstract class FileUploaderSshj {
     }
 
     protected abstract void _Push(SSHClient ssh, FileUri fileUri) throws SShareUploadException;
-
-
 }

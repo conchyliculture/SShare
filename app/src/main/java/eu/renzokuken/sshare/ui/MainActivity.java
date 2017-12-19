@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Connection> getConnectionList() {
         MyDB database = MyDB.getDatabase(getApplicationContext());
+        //database.connectionDao().truncateHostKeyInfo();
         return new ArrayList<>(database.connectionDao().getAllConnections());
     }
 
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -75,15 +76,15 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                Intent sIntent = new Intent(this, SettingsActivity.class);
+                startActivity(sIntent);
                 return true;
-//            case R.id.help:
-//                showHelp();
-//                return true;
+            case R.id.menu_manage_keys:
+                Intent pIntent = new Intent(this, ManagePubKeysActivity.class);
+                startActivity(pIntent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

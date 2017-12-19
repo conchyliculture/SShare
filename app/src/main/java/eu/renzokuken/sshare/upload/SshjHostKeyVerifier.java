@@ -18,7 +18,7 @@ import eu.renzokuken.sshare.persistence.MyDao;
  */
 
 class SshjHostKeyVerifier implements HostKeyVerifier {
-    private static final String TAG = "SshjHostKeyVerifier" ;
+    private static final String TAG = "SshjHostKeyVerifier";
     private final MyDao dbConnection;
     private PublicKey lastSeenKey;
 
@@ -31,7 +31,7 @@ class SshjHostKeyVerifier implements HostKeyVerifier {
     public boolean verify(String hostname, int port, PublicKey key) {
         lastSeenKey = key;
         String fingerPrint = SecurityUtils.getFingerprint(key);
-        HostKeyInfo storedHostKey = dbConnection.getHostKeyInfo("["+hostname+":"+port+"]", key.getAlgorithm());
+        HostKeyInfo storedHostKey = dbConnection.getHostKeyInfo("[" + hostname + ":" + port + "]", key.getAlgorithm());
         if (storedHostKey == null) {
             Log.d(TAG, "On a pas la clé =(");
             return false;
@@ -49,6 +49,6 @@ class SshjHostKeyVerifier implements HostKeyVerifier {
         keyInfo.keyString = SecurityUtils.getFingerprint(key);
         keyInfo.type = key.getAlgorithm();
         dbConnection.addHostKey(keyInfo);
-        Log.d(TAG, "Added new key"+keyInfo);
+        Log.d(TAG, "Added new key" + keyInfo);
     }
 }

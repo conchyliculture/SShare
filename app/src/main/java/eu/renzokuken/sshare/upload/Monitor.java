@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -17,13 +18,14 @@ class Monitor {
     private static final String TAG = "SShareProgressMonitor";
     private static final long NOTIFICATION_UPDATE_THROTTLE_MILLIS = 500;
     private final FileUri fileUri;
+    private final Context context;
+    private final NotificationManager notificationManager;
     private int notificationId = 1;
     private NotificationCompat.Builder notificationBuilder;
-    private final NotificationManager notificationManager;
-
     private long lastTick = System.currentTimeMillis();
 
     public Monitor(Context context, FileUri fileUri) {
+        this.context = context;
         this.fileUri = fileUri;
         // TODO: cancelable uploads
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -63,7 +65,7 @@ class Monitor {
         notificationBuilder.setProgress(0, 0, false);
         notificationManager.notify(notificationId, notificationBuilder.build());
 
-        String message = "Finished uploading "+fileUri.fileName;
+        String message = "Finished uploading " + fileUri.fileName;
         updateNotificationSubText(message);
         // TODO: remove the notification after like 3 secs
     }
@@ -71,6 +73,7 @@ class Monitor {
     void error(String message, Throwable e) {
         updateNotificationSubText(message);
         Log.e(TAG, "Got error " + message);
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         e.printStackTrace();
     }
 

@@ -1,22 +1,11 @@
 <resources>
     <string name="app_name">SShare</string>
-    <string name="sftp_method">SFTP</string>
-    <string name="lp_auth">Login/password</string>
-    <string name="key_auth">Public/Private keys</string>
-    <string-array name="protocol_modes">
-        <!-- Order is important! -->
-        <item>@string/sftp_method</item>
-        <!--item>SCP</item>
-        <item>FTPS</item>
-        <item>FTP</item-->
-    </string-array>
+    <string name="sftp_protocol">SFTP</string>
+    <string name="password_authentication">Password</string>
+    <string name="key_authentication">Private keys</string>
 
-    <string-array name="authentication_modes">
-        <item>@string/lp_auth</item>
-        <item>@string/key_auth</item>
-    </string-array>
 
-    <string name="create_connection">\"Create New Connection\"</string>
+    <string name="update_connection">Update</string>
     <string name="notification_channel_id">sshare_notification</string>
 
     <!-- Strings related to Settings -->
@@ -48,5 +37,6 @@
         <item>NO</item>
     </string-array>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
+    <string name="select_key_message_button">Select Private Key</string>
 
 </resources>

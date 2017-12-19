@@ -11,21 +11,20 @@ import java.io.Serializable;
  */
 
 @Entity
-public class HostKeyInfo implements Serializable{
+public class HostKeyInfo implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
     public String hostname;
-    @ColumnInfo(name = "key",typeAffinity = ColumnInfo.BLOB)
+    @ColumnInfo(name = "key", typeAffinity = ColumnInfo.BLOB)
     public byte[] key;
     public String keyString;
     public String type;
 
-    public HostKeyInfo(){}
-
-
-    public String toString() {
-        return this.hostname+" ("+this.type+")";
+    public HostKeyInfo() {
     }
 
+    public String toString() {
+        return this.hostname + " (" + this.type + ")";
+    }
 }

@@ -5,8 +5,7 @@ package eu.renzokuken.sshare.upload;
  */
 
 class SShareUploadException extends Exception {
-    SShareUploadException(String message, Throwable cause)
-    {
+    SShareUploadException(String message, Throwable cause) {
         super(message, cause);
     }
 

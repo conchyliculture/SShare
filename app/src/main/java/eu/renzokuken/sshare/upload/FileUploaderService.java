@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.security.Security;
 
-import eu.renzokuken.sshare.ConnectionHelpers;
+import eu.renzokuken.sshare.ConnectionConstants;
 import eu.renzokuken.sshare.persistence.Connection;
 
 /**
@@ -46,16 +46,17 @@ public class FileUploaderService extends IntentService {
 
         Monitor monitor = new Monitor(this, fileUri);
 
-        if (connection.protocol.equals(ConnectionHelpers.MODE_SFTP)) {
-            SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, connection, monitor); // important d'avoir l'app context
-            try {
-                fileUploader.uploadFile(fileUri);
-            } catch (SShareUploadException e) {
-                e.printStackTrace();
-                monitor.error(e.getMessage(), e);
-            }
-        } else {
-            Log.e(TAG, "Protocol " + connection.protocol + " not implemented =(");
+        switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
+            case ENUM_PROTO_SFTP:
+                SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, connection, monitor); // important d'avoir l'app context
+                try {
+                    fileUploader.uploadFile(fileUri);
+                } catch (SShareUploadException e) {
+                    monitor.error(e.getMessage(), e);
+                }
+                break;
+            default:
+                Log.e(TAG, "Protocol " + connection.protocol + " not implemented =(");
         }
     }
 }

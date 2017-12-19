@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import eu.renzokuken.sshare.R;
 
@@ -16,21 +15,7 @@ import eu.renzokuken.sshare.R;
 
 public class PopupActivity extends Activity {
 
-    private static final String TAG = "PopupActivity";
     public static final YesNoHandler handler = new YesNoHandler();
-
-    public static class YesNoHandler extends Handler {
-
-        private int response = -1;
-
-        public int getResponse(){ return response; }
-
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d(TAG, "arg1 is "+msg.arg1+" what is "+msg.what);
-            this.response = msg.arg1;
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +52,22 @@ public class PopupActivity extends Activity {
             alertDialog.show();
         }
     }
+
     private void quit() {
         finish();
+    }
+
+    public static class YesNoHandler extends Handler {
+
+        private int response = -1;
+
+        public int getResponse() {
+            return response;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            this.response = msg.arg1;
+        }
     }
 }

@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_manage_keys"
+        android:title="Manage PubKeys" />
+    <item
         android:id="@+id/menu_settings"
         android:title="Settings" />
 </menu>

@@ -76,7 +76,7 @@ public class ConnectionListFragment extends ListFragment {
             if (Intent.ACTION_SEND.equals(intent.getAction())) {
                 fileURIs.add((Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
-                for (Parcelable p: intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)) {
+                for (Parcelable p : intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)) {
                     fileURIs.add((Uri) p);
                 }
             }
@@ -85,7 +85,7 @@ public class ConnectionListFragment extends ListFragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
-            for (Uri fileURI:fileURIs) {
+            for (Uri fileURI : fileURIs) {
                 Intent intent = new Intent(getActivity(), FileUploaderService.class);
                 intent.putExtra("fileURI", fileURI);
                 intent.putExtra("connection", connection);
