@@ -64,7 +64,9 @@ abstract class FileUploaderSshj {
         } catch (TransportException e) {
             if (e.getDisconnectReason().equals(DisconnectReason.HOST_KEY_NOT_VERIFIABLE)) {
                 PublicKey key = sshjHostKeyVerifier.getLastSeenKey();
-                boolean shouldAccept = askUser(context.getString(R.string.warning_ask_fingerprint_trust, SecurityUtils.getFingerprint(key)));
+                boolean shouldAccept = askUser(
+                        context.getString(R.string.unknown_host_key),
+                        context.getString(R.string.warning_ask_fingerprint_trust, SecurityUtils.getFingerprint(key)));
                 if (shouldAccept) {
                     sshjHostKeyVerifier.addKey(connection, key);
                     ssh = _Connect();
@@ -80,11 +82,12 @@ abstract class FileUploaderSshj {
         return ssh;
     }
 
-    private boolean askUser(String question) {
+    private boolean askUser(String title, String question) {
         Intent intent = new Intent(context, PopupActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(context.getString(R.string.question_handle));
-        intent.putExtra(context.getString(R.string.question_handle), question);
+        intent.putExtra(context.getString(R.string.message_handle), question);
+        intent.putExtra(context.getString(R.string.title_handle), title);
 
         context.startActivity(intent);
 

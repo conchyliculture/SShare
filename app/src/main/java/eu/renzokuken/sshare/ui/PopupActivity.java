@@ -21,8 +21,11 @@ public class PopupActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String question = null;
+        String title = getString(R.string.question_popup_title);
+
         if (getIntent().hasExtra(getString(R.string.question_handle))) {
-            question = getIntent().getStringExtra(getString(R.string.question_handle));
+            title = getIntent().getStringExtra(getString(R.string.title_handle));
+            question = getIntent().getStringExtra(getString(R.string.message_handle));
         }
 
         if (question != null) {
@@ -46,7 +49,7 @@ public class PopupActivity extends Activity {
                         }
                     })
                     .create();
-            alertDialog.setTitle(getString(R.string.question_popup_title));
+            alertDialog.setTitle(title);
             alertDialog.setMessage(question);
             alertDialog.setIcon(R.drawable.ic_info_black_24dp);
             alertDialog.show();
