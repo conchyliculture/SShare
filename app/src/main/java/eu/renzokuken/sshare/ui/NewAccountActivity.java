@@ -61,7 +61,7 @@ public class NewAccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle b = this.getIntent().getBundleExtra(getString(R.string.file_uri_handle));
+        Bundle b = this.getIntent().getBundleExtra(getString(R.string.data_handle));
 
         if (b != null) {
             this.connection = (Connection) b.getSerializable(getString(R.string.connection_handle));
