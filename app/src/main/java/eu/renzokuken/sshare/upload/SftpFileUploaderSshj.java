@@ -132,6 +132,7 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
 
         public void setTransferListener(TransferListener transferListener) {
             this.getFileTransfer().setTransferListener(transferListener);
+            this.getFileTransfer().setPreserveAttributes(false); // TODO
         }
     }
 
