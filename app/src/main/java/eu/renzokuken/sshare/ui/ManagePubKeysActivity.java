@@ -88,7 +88,7 @@ public class ManagePubKeysActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_pubkeys, menu);
+        inflater.inflate(R.menu.menu_privkeys, menu);
         return true;
     }
 
