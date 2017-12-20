@@ -25,7 +25,12 @@ public class Connection implements Serializable {
     public String auth_mode;
 
     public String toString() {
-        return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.remotePath;
+        if (this.remotePath==null || this.remotePath.isEmpty()) {
+            return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.port;
+        } else {
+            return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.port + "/" + remotePath;
+
+        }
     }
 
     public String getHostString() {
