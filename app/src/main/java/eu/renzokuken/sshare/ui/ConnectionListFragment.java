@@ -42,9 +42,7 @@ public class ConnectionListFragment extends ListFragment {
         Intent intent = getActivity().getIntent();
         String action = intent.getAction();
 
-        if (Intent.ACTION_SEND.equals(action)) {
-            listView.setOnItemClickListener(new UploadFileOnItemClickListener(intent));
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+        if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
             listView.setOnItemClickListener(new UploadFileOnItemClickListener(intent));
         } else {
             listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
