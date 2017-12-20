@@ -40,14 +40,14 @@
     <string name="authenticating_to">Authenticating to %1$s…</string>
     <string name="upload_canceled">Upload cancelled</string>
     <string name="uploading_filename">Uploading %1$s…</string>
-    <string name="preparing_connection">Preparing connection…</string>
     <string name="upload_finished">Finished uploading %1$s</string>
     <string name="error_permission_error">Permission error.</string>
     <string name="error_connection_closed">Connection closed unexpectedly</string>
     <string name="error_sftp_error">SFTP server error.</string>
     <string name="connection_list_title">Connection List</string>
-
     <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
+    <string name="no_private_key_title">No private key found!</string>
+    <string name="no_private_key_message">Please add some private key to use.</string>
 
 
     <!-- Strings related to intent extra keys -->
@@ -62,7 +62,6 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- General settings -->
-    <string name="pref_header_general">General</string>
     <string name="pref_file_already_exists">When a file already exists</string>
     <string-array name="pref_file_already_exists_titles">
         <item>Overwrite</item>
@@ -77,6 +76,8 @@
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
     <string name="select_connection_title">Select Connection to use</string>
+    <string name="edit_connection_title">Edit Connection</string>
+    <string name="new_connection_title">New Connection</string>
 
 
     <string-array name="pref_host_key_checking_mode_titles">

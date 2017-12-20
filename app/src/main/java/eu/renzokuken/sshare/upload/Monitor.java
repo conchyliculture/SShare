@@ -23,7 +23,7 @@ class Monitor {
     private final Context context;
     private final NotificationManager notificationManager;
     private int notificationId = 1;
-    private NotificationCompat.Builder notificationBuilder;
+    private final NotificationCompat.Builder notificationBuilder;
     private long lastTick = System.currentTimeMillis();
 
     public Monitor(Context context, FileUri fileUri) {
@@ -40,8 +40,8 @@ class Monitor {
         }
     }
 
-    public static void showToastInUiThread(final Context context,
-                                           final String message) {
+    private static void showToastInUiThread(final Context context,
+                                            final String message) {
         Handler mainThread = new Handler(Looper.getMainLooper());
         mainThread.post(new Runnable() {
             @Override

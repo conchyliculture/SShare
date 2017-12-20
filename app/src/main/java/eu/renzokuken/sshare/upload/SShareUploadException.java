@@ -6,7 +6,7 @@ package eu.renzokuken.sshare.upload;
 
 class SShareUploadException extends Exception {
 
-    public String customMessage;
+    public final String customMessage;
 
     SShareUploadException(String customMessage, Throwable cause) {
         super(cause);

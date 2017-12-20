@@ -2,6 +2,7 @@ package eu.renzokuken.sshare.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,12 @@ import static eu.renzokuken.sshare.ConnectionConstants.ProtocolMethod.ENUM_PROTO
 public class NewAccountActivity extends AppCompatActivity {
 
     private Connection connection;
+    private ConnectionConstants.ProtocolMethod protocolSelected = ENUM_PROTO_SFTP;
+    private ConnectionConstants.AuthenticationMethod authModeSelected = ENUM_AUTH_LP;
+    private boolean isAddingNewConnection = true;
+
     private MyDB database;
+    private File privateKeyFile;
 
     private Button selectKeyButton;
     private Button submitButton;
@@ -39,8 +45,7 @@ public class NewAccountActivity extends AppCompatActivity {
     private TextInputEditText inputPassword;
     private TextInputEditText inputRemotePath;
 
-    private boolean isAddingNewConnection = true;
-    private ConnectionConstants.AuthenticationMethod authModeSelected = ENUM_AUTH_LP;
+
     private final TextWatcher globalTextChangedWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -55,18 +60,19 @@ public class NewAccountActivity extends AppCompatActivity {
         public void afterTextChanged(Editable editable) {
         }
     };
-    private ConnectionConstants.ProtocolMethod protocolSelected = ENUM_PROTO_SFTP;
-    private File privateKeyFile;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle b = this.getIntent().getBundleExtra(getString(R.string.data_handle));
+        setTitle(R.string.new_connection_title);
 
+        Bundle b = this.getIntent().getBundleExtra(getString(R.string.data_handle));
         if (b != null) {
             this.connection = (Connection) b.getSerializable(getString(R.string.connection_handle));
             if (this.connection != null) {
                 isAddingNewConnection = false;
+                setTitle(R.string.edit_connection_title);
             }
         }
 
@@ -141,26 +147,41 @@ public class NewAccountActivity extends AppCompatActivity {
                 AlertDialog.Builder builderSingle = new AlertDialog.Builder(NewAccountActivity.this);
                 // TODO: get a nice icon
                 // builderSingle.setIcon(R.drawable.ic_launcher);
-                builderSingle.setTitle(getString(R.string.select_key_message_button));
+
                 final ArrayList<File> keyFilesList = ManagePubKeysActivity.getPubKeysList(NewAccountActivity.this);
-                final ArrayAdapter<String> keyFilesAdapter = new ArrayAdapter<>(NewAccountActivity.this, android.R.layout.select_dialog_singlechoice);
-                for (File key : keyFilesList) {
-                    keyFilesAdapter.add(key.getName());
+                if (keyFilesList.isEmpty()) {
+                    builderSingle.setTitle(getString(R.string.no_private_key_title));
+                    builderSingle.setMessage(getString(R.string.no_private_key_message));
+                    builderSingle.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent keyIntent = new Intent(NewAccountActivity.this, ManagePubKeysActivity.class);
+                            startActivity(keyIntent);
+                        }
+                    });
+                    builderSingle.show();
+                } else {
+
+                    builderSingle.setTitle(getString(R.string.select_key_message_button));
+                    final ArrayAdapter<String> keyFilesAdapter = new ArrayAdapter<>(NewAccountActivity.this, android.R.layout.select_dialog_singlechoice);
+                    for (File key : keyFilesList) {
+                        keyFilesAdapter.add(key.getName());
+                    }
+                    builderSingle.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builderSingle.setAdapter(keyFilesAdapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            privateKeyFile = keyFilesList.get(which);
+                            selectKeyButton.setText(privateKeyFile.getName());
+                        }
+                    });
+                    builderSingle.show();
                 }
-                builderSingle.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builderSingle.setAdapter(keyFilesAdapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        privateKeyFile = keyFilesList.get(which);
-                        selectKeyButton.setText(privateKeyFile.getName());
-                    }
-                });
-                builderSingle.show();
             }
         });
 
