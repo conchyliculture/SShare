@@ -11,6 +11,7 @@ import net.schmizz.sshj.xfer.LocalFileFilter;
 import net.schmizz.sshj.xfer.LocalSourceFile;
 import net.schmizz.sshj.xfer.TransferListener;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,7 +24,7 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
         super(context, connection, monitor);
     }
 
-    public void _Push(SSHClient ssh, FileUri fileUri) throws SShareUploadException {
+    public void _Push(SSHClient ssh, FileUri fileUri, String destinationPath) throws SShareUploadException {
 
         MyTransferListener transferListener = new MyTransferListener();
         transferListener.setMonitor(this.monitor);
@@ -31,8 +32,12 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
         try {
             MySFTPClient sftp = new MySFTPClient(ssh.newSFTPClient());
             sftp.setTransferListener(transferListener);
-            sftp.put(new SSHJLocalSourceFile(fileUri), "/tmp"); // TODO
-            sftp.chmod("/tmp/" + fileUri.fileName, 660);
+            File destinationFile = new File(fileUri.fileName);
+            if (destinationPath != null && !destinationPath.isEmpty()) {
+                destinationFile = new File(destinationPath, fileUri.fileName);
+            }
+            sftp.put(new SSHJLocalSourceFile(fileUri), destinationFile.getPath());
+            //sftp.chmod(destinationFile.getPath(), 600); // TODO do a umask thing
         } catch (ConnectionException e) {
             throw new SShareUploadException("Connection closed unexpectedly", e);
         } catch (SFTPException e) {

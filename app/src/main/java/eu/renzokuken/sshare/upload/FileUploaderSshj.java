@@ -145,9 +145,9 @@ abstract class FileUploaderSshj {
         if (!ssh.isConnected()) {
             throw new SShareUploadException("Could not connect");
         }
-        _Push(ssh, fileUri);
+        _Push(ssh, fileUri, connection.remotePath);
         _Cleanup(ssh);
     }
 
-    protected abstract void _Push(SSHClient ssh, FileUri fileUri) throws SShareUploadException;
+    protected abstract void _Push(SSHClient ssh, FileUri fileUri, String destinationPath) throws SShareUploadException;
 }
