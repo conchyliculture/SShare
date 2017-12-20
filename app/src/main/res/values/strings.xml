@@ -71,7 +71,7 @@
         <item>OVERWRITE</item>
         <item>SKIP</item>
     </string-array>
-    <string name="pref_file_already_exists_default">0</string>
+    <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
 
