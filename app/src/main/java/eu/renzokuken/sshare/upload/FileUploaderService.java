@@ -53,7 +53,7 @@ public class FileUploaderService extends IntentService {
                 try {
                     fileUploader.uploadFile(fileUri);
                 } catch (SShareUploadException e) {
-                    monitor.error(e.getMessage(), e);
+                    monitor.error(e);
                 }
                 break;
             default:

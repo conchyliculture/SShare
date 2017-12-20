@@ -2,6 +2,8 @@ package eu.renzokuken.sshare.upload;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,21 +31,46 @@ class Monitor {
         this.fileUri = fileUri;
         // TODO: cancelable uploads
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id));
         if (notificationManager != null) {
             Random r = new Random();
             notificationId = r.nextInt(685463535); // lol
-            notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id));
-            notificationBuilder.setContentTitle(context.getString(R.string.uploading_filename, fileUri.fileName))
-                    .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
-                    .setContentText(context.getString(R.string.preparing_connection));
-            notificationManager.notify(notificationId, notificationBuilder.build());
         } else {
             Log.e(TAG, "Notification manager is null =(");
         }
     }
 
-    void updateNotificationSubText(String message) {
-        notificationBuilder.setContentText(message);
+    public static void showToastInUiThread(final Context context,
+                                           final String message) {
+        Handler mainThread = new Handler(Looper.getMainLooper());
+        mainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    void updateNotificationStart(String fileName) {
+        notificationBuilder.setContentTitle(context.getString(R.string.uploading_filename, fileName))
+                .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
+                .setOngoing(true)
+                .setProgress(0, 0, true);
+        notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    void updateNotificationError(String text, String subText) {
+        notificationBuilder.setContentTitle(text)
+                .setContentText(subText)
+                .setOngoing(false)
+                .setSmallIcon(R.drawable.ic_error_black_24dp)
+                .setProgress(0, 0, false);
+        notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    void updateNotificationTitleText(String message) {
+        notificationBuilder.setContentTitle(message);
+        notificationBuilder.setProgress(0, 0, true);
         notificationManager.notify(notificationId, notificationBuilder.build());
     }
 
@@ -60,18 +87,20 @@ class Monitor {
         notificationManager.notify(notificationId, notificationBuilder.build());
     }
 
-    public void finish() {
+    public void updateNotificationFinish() {
         // Removes the progress bar
-        notificationBuilder.setProgress(0, 0, false);
+        notificationBuilder.setProgress(0, 0, false)
+                .setContentTitle(context.getString(R.string.upload_finished, fileUri.fileName))
+                .setSmallIcon(R.drawable.ic_done_black_24dp)
+                .setOngoing(false);
         notificationManager.notify(notificationId, notificationBuilder.build());
-
-        updateNotificationSubText(context.getString(R.string.upload_finished, fileUri.fileName));
         // TODO: remove the notification after like 3 secs
     }
 
-    void error(String message, Throwable e) {
-        updateNotificationSubText(message);
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    void error(final SShareUploadException e) {
+        updateNotificationError(e.customMessage, e.getCause().getLocalizedMessage());
+        String toastText = e.customMessage + " (" + e.getCause().getLocalizedMessage() + ")";
+        showToastInUiThread(context, toastText);
         e.printStackTrace();
     }
 

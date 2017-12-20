@@ -50,6 +50,7 @@ abstract class FileUploaderSshj {
     private SSHClient _Connect() throws SShareUploadException {
         SSHClient ssh = new SSHClient(new AndroidConfig());
         SshjHostKeyVerifier sshjHostKeyVerifier = new SshjHostKeyVerifier(context);
+        monitor.updateNotificationTitleText(context.getString(R.string.connecting_to, connection.getHostString()));
         try {
             switch (getHostKeyCheckingPref()) {
                 case "NO":
@@ -71,13 +72,15 @@ abstract class FileUploaderSshj {
                     sshjHostKeyVerifier.addKey(connection, key);
                     ssh = _Connect();
                 } else {
-                    monitor.updateNotificationSubText(context.getString(R.string.remote_host_key_not_accepted));
+                    monitor.updateNotificationError(
+                            context.getString(R.string.upload_canceled),
+                            context.getString(R.string.remote_host_key_not_accepted));
                 }
             } else {
                 throw new SShareUploadException(context.getString(R.string.error_disconnected_from_host, connection.getHostString()), e);
             }
         } catch (Exception e) {
-            throw new SShareUploadException(context.getString(R.string.error_connecting_to_host_with_msg, connection.getHostString(), e.getLocalizedMessage()), e);
+            throw new SShareUploadException(context.getString(R.string.error_connecting_to_host_with_msg, connection.getHostString()), e);
         }
         return ssh;
     }
@@ -105,7 +108,7 @@ abstract class FileUploaderSshj {
     }
 
     private void _Authenticate(SSHClient ssh) throws SShareUploadException {
-        monitor.updateNotificationSubText(context.getString(R.string.notification_authenticating_to, connection.getHostString()));
+        monitor.updateNotificationTitleText(context.getString(R.string.authenticating_to, connection.getHostString()));
         AuthMethod authMethod = null;
 
         switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
@@ -135,10 +138,11 @@ abstract class FileUploaderSshj {
         } catch (IOException e) {
             throw new SShareUploadException(context.getString(R.string.error_cleanup), e);
         }
-        monitor.finish();
+        monitor.updateNotificationFinish();
     }
 
     public void uploadFile(FileUri fileUri) throws SShareUploadException {
+        monitor.updateNotificationStart(fileUri.fileName);
         SSHClient ssh = _Connect();
         _Authenticate(ssh);
         if (!ssh.isConnected()) {
