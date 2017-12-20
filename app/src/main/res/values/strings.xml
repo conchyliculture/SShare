@@ -45,6 +45,8 @@
     <string name="error_permission_error">Permission error.</string>
     <string name="error_connection_closed">Connection closed unexpectedly</string>
     <string name="error_sftp_error">SFTP server error.</string>
+    <string name="connection_list_title">Connection List</string>
+
     <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
 
 
@@ -74,6 +76,7 @@
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
+    <string name="select_connection_title">Select Connection to use</string>
 
 
     <string-array name="pref_host_key_checking_mode_titles">

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,11 @@ import eu.renzokuken.sshare.upload.FileUploaderService;
 
 public class ConnectionListFragment extends ListFragment {
 
+    private MainActivity mainActivity;
+
     private List<Connection> getConnectionList() {
-        MainActivity a = (MainActivity) getActivity();
-        return a.getConnectionList();
+         mainActivity = (MainActivity) getActivity();
+        return mainActivity.getConnectionList();
     }
 
     @Override
@@ -43,8 +46,12 @@ public class ConnectionListFragment extends ListFragment {
         String action = intent.getAction();
 
         if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            TextView connectionListTextView = mainActivity.findViewById(R.id.connection_list_text_view);
+            connectionListTextView.setText(getString(R.string.select_connection_title));
             listView.setOnItemClickListener(new UploadFileOnItemClickListener(intent));
         } else {
+            TextView connectionListTextView = mainActivity.findViewById(R.id.connection_list_text_view);
+            connectionListTextView.setText(getString(R.string.connection_list_title));
             listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
         }
     }

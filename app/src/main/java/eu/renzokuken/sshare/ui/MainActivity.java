@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import eu.renzokuken.sshare.R;
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Connection> getConnectionList() {
         MyDB database = MyDB.getDatabase(getApplicationContext());
-        //database.connectionDao().truncateHostKeyInfo();
         return new ArrayList<>(database.connectionDao().getAllConnections());
     }
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragMan = getFragmentManager();
             FragmentTransaction fragTransaction = fragMan.beginTransaction();
             ConnectionListFragment connectionListFragment = new ConnectionListFragment();
-            fragTransaction.add(R.id.main_activity_container, connectionListFragment);
+            fragTransaction.add(R.id.main_linear_layout, connectionListFragment);
             fragTransaction.commit();
         }
     }
