@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Protocol:"
+                android:text="@string/protocol_text_view_value"
                 app:layout_constraintBottom_toTopOf="@+id/auth_text_view"
                 app:layout_constraintEnd_toStartOf="@+id/spinner_protocols"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Authentication method:"
+                android:text="@string/authentication_method_textview_value"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/spinner_auth"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -93,7 +93,7 @@
                     android:id="@+id/input_hostname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="hostname"
+                    android:hint="@string/hostname_textview_hint"
                     android:inputType="text"
                     android:textAppearance="@android:style/TextAppearance.Material.Medium" />
             </android.support.design.widget.TextInputLayout>
@@ -113,7 +113,7 @@
                     android:id="@+id/input_port"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="port"
+                    android:hint="@string/port_textview_hint"
                     android:inputType="number"
                     android:textAppearance="@android:style/TextAppearance.Material.Medium" />
             </android.support.design.widget.TextInputLayout>
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"
-                android:text=":"
+                android:text="@string/colon"
                 android:textAlignment="center"
                 android:textAppearance="@android:style/TextAppearance.Material.Medium"
                 app:layout_constraintBottom_toBottomOf="@+id/textInputLayout4"
@@ -149,7 +149,7 @@
                 android:id="@+id/input_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="username"
+                android:hint="@string/username_textview_hint"
                 android:inputType="text" />
 
         </android.support.design.widget.TextInputLayout>
@@ -172,7 +172,7 @@
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="password"
+                    android:hint="@string/password_textview_hint"
                     android:inputType="textPassword" />
             </android.support.design.widget.TextInputLayout>
 
@@ -207,9 +207,8 @@
                 android:id="@+id/input_remote_path"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Leave empty to use the user home directory"
-                android:inputType="text"
-                android:text="" />
+                android:hint="@string/remote_path_textview_hint"
+                android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -221,7 +220,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:enabled="false"
-            android:text="Create"
+            android:text="@string/create_button_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

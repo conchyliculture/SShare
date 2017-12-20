@@ -3,8 +3,8 @@
 
     <item
         android:id="@+id/menu_manage_keys"
-        android:title="Manage PubKeys" />
+        android:title="@string/manage_private_keys_menu_text" />
     <item
         android:id="@+id/menu_settings"
-        android:title="Settings" />
+        android:title="@string/settings_menu_text" />
 </menu>

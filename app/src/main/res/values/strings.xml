@@ -1,19 +1,35 @@
 <resources>
+    <!-- Generic UI Strings -->
+
     <string name="app_name">SShare</string>
     <string name="sftp_protocol">SFTP</string>
     <string name="password_authentication">Password</string>
     <string name="key_authentication">Private keys</string>
-
-
+    <string name="pref_host_key_checking_mode_default">STRICT</string>
+    <string name="select_key_message_button">Select Private Key</string>
+    <string name="protocol_text_view_value">Protocol:</string>
+    <string name="authentication_method_textview_value">Authentication method:</string>
+    <string name="hostname_textview_hint">Hostname</string>
+    <string name="port_textview_hint">Port</string>
+    <string name="colon">:</string>
+    <string name="username_textview_hint">Username</string>
+    <string name="password_textview_hint">Password</string>
+    <string name="remote_path_textview_hint">Remote path (leave empty for default)</string>
+    <string name="create_button_text">Create</string>
+    <string name="no_connection_textview">No connection. Please add some!</string>
+    <string name="private_key_text_view">No private key. Please add some!</string>
+    <string name="manage_private_keys_menu_text">Manage private keys</string>
+    <string name="settings_menu_text">Settings</string>
+    <string name="import_key_menu_text">Import private key</string>
     <string name="update_connection">Update</string>
     <string name="notification_channel_id">sshare_notification</string>
 
+
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
-    <!-- Example General settings -->
+
+    <!-- General settings -->
     <string name="pref_header_general">General</string>
-
-
     <string name="pref_file_already_exists">When a file already exists</string>
     <string-array name="pref_file_already_exists_titles">
         <item>Overwrite</item>
@@ -36,7 +52,4 @@
         <item>STRICT</item>
         <item>NO</item>
     </string-array>
-    <string name="pref_host_key_checking_mode_default">STRICT</string>
-    <string name="select_key_message_button">Select Private Key</string>
-
 </resources>
