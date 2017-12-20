@@ -28,16 +28,18 @@
     <string name="question_handle">question_handle</string>
     <string name="question_popup_title">Warning</string>
     <string name="error_connection_timeout">Connection timeout to %1$s. Check hostname and port.</string>
-    <string name="warning_ask_fingerprint_trust">Unknown Host!\\nDo you trust the following fingerprint:\\n%1$s</string>
+    <string name="warning_ask_fingerprint_trust">Do you recognize the following fingerprint:\n%1$s\n</string>
     <string name="remote_host_key_not_accepted">Host key not recognized.</string>
     <string name="error_disconnected_from_host">Disconnected from %1$s</string>
-    <string name="error_connecting_to_host_with_msg">Error connecting to %1$s: %2$s</string>
+    <string name="error_connecting_to_host_with_msg">Error connecting to %1$s</string>
     <string name="error_could_not_connect">Could not connect.</string>
     <string name="error_cleanup">Error during cleanup.</string>
     <string name="error_transport">Transport Error.</string>
     <string name="error_login_failed">Could not login. Check your credentials.</string>
-    <string name="notification_authenticating_to">Authenticating to %1$s…</string>
-    <string name="uploading_filename">Uploading %1$s</string>
+    <string name="connecting_to">Connecting to %1$s…</string>
+    <string name="authenticating_to">Authenticating to %1$s…</string>
+    <string name="upload_canceled">Upload cancelled</string>
+    <string name="uploading_filename">Uploading %1$s…</string>
     <string name="preparing_connection">Preparing connection…</string>
     <string name="upload_finished">Finished uploading %1$s</string>
     <string name="error_permission_error">Permission error.</string>
@@ -47,9 +49,12 @@
 
 
     <!-- Strings related to intent extra keys -->
-    <string name="connection_handle">connection</string>
-    <string name="file_uri_handle">file_uri</string>
-    <string name="data_handle">data</string>
+    <string name="connection_handle">connection_handle</string>
+    <string name="file_uri_handle">file_uri_handle</string>
+    <string name="data_handle">data_handle</string>
+    <string name="title_handle">title_handle</string>
+    <string name="message_handle">message_handle</string>
+    <string name="unknown_host_key">Unknown Host Key</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
@@ -69,8 +74,6 @@
     <string name="pref_file_already_exists_default">0</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
-
-
 
 
     <string-array name="pref_host_key_checking_mode_titles">
