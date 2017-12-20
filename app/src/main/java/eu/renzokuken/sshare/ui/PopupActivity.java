@@ -21,13 +21,13 @@ public class PopupActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String question = null;
-        if (getIntent().hasExtra("question")) {
-            question = getIntent().getStringExtra("question");
+        if (getIntent().hasExtra(getString(R.string.question_handle))) {
+            question = getIntent().getStringExtra(getString(R.string.question_handle));
         }
 
         if (question != null) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Message msg = Message.obtain();
@@ -36,7 +36,7 @@ public class PopupActivity extends Activity {
                             quit();
                         }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Message msg = Message.obtain();
@@ -46,7 +46,7 @@ public class PopupActivity extends Activity {
                         }
                     })
                     .create();
-            alertDialog.setTitle("Question");
+            alertDialog.setTitle(getString(R.string.question_popup_title));
             alertDialog.setMessage(question);
             alertDialog.setIcon(R.drawable.ic_info_black_24dp);
             alertDialog.show();

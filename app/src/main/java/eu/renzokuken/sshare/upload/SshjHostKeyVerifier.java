@@ -1,7 +1,6 @@
 package eu.renzokuken.sshare.upload;
 
 import android.content.Context;
-import android.util.Log;
 
 import net.schmizz.sshj.common.SecurityUtils;
 import net.schmizz.sshj.transport.verification.HostKeyVerifier;
@@ -18,7 +17,6 @@ import eu.renzokuken.sshare.persistence.MyDao;
  */
 
 class SshjHostKeyVerifier implements HostKeyVerifier {
-    private static final String TAG = "SshjHostKeyVerifier";
     private final MyDao dbConnection;
     private PublicKey lastSeenKey;
 
@@ -32,11 +30,7 @@ class SshjHostKeyVerifier implements HostKeyVerifier {
         lastSeenKey = key;
         String fingerPrint = SecurityUtils.getFingerprint(key);
         HostKeyInfo storedHostKey = dbConnection.getHostKeyInfo("[" + hostname + ":" + port + "]", key.getAlgorithm());
-        if (storedHostKey == null) {
-            Log.d(TAG, "On a pas la clé =(");
-            return false;
-        }
-        return fingerPrint.equals(storedHostKey.keyString);
+        return storedHostKey != null && fingerPrint.equals(storedHostKey.keyString);
     }
 
     public PublicKey getLastSeenKey() {
@@ -49,6 +43,5 @@ class SshjHostKeyVerifier implements HostKeyVerifier {
         keyInfo.keyString = SecurityUtils.getFingerprint(key);
         keyInfo.type = key.getAlgorithm();
         dbConnection.addHostKey(keyInfo);
-        Log.d(TAG, "Added new key" + keyInfo);
     }
 }

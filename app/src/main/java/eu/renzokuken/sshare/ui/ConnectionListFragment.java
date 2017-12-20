@@ -15,6 +15,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 import eu.renzokuken.sshare.upload.FileUploaderService;
 
@@ -63,8 +64,8 @@ public class ConnectionListFragment extends ListFragment {
             Connection connection = (Connection) adapterView.getAdapter().getItem(i);
             Intent intent = new Intent(getActivity(), NewAccountActivity.class);
             Bundle data = new Bundle();
-            data.putSerializable("connection", connection);
-            intent.putExtra("data", data);
+            data.putSerializable(getString(R.string.connection_handle), connection);
+            intent.putExtra(getString(R.string.data_handle), data);
             startActivity(intent);
         }
     }
@@ -87,8 +88,8 @@ public class ConnectionListFragment extends ListFragment {
             Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
             for (Uri fileURI : fileURIs) {
                 Intent intent = new Intent(getActivity(), FileUploaderService.class);
-                intent.putExtra("fileURI", fileURI);
-                intent.putExtra("connection", connection);
+                intent.putExtra(getString(R.string.file_uri_handle), fileURI);
+                intent.putExtra(getString(R.string.connection_handle), connection);
                 getActivity().startService(intent);
                 getActivity().finish();
             }

@@ -54,7 +54,6 @@ public class ManagePubKeysActivity extends AppCompatActivity {
                 Log.d(TAG, "file " + keyFile.getName() + " is not a valid key file");
             }
         }
-        Log.d(TAG, "len " + pubKeyFileList.size());
         return pubKeyFileList;
     }
 
@@ -104,7 +103,7 @@ public class ManagePubKeysActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_SELECT_CODE);
+                startActivityForResult(Intent.createChooser(intent,getString(R.string.select_file_chooser_title)), FILE_SELECT_CODE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -120,7 +119,7 @@ public class ManagePubKeysActivity extends AppCompatActivity {
                 File file = copyToStorage(keyFileUri);
                 boolean result = isValidKeyFile(file);
                 if (result) {
-                    Toast.makeText(this, "Unable to load key " + keyFileUri.getPath(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.error_unable_to_load_key, keyFileUri.getPath()), Toast.LENGTH_LONG).show();
                 }
             }
         }

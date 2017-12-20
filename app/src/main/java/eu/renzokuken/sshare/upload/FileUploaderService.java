@@ -9,6 +9,7 @@ import android.util.Log;
 import java.security.Security;
 
 import eu.renzokuken.sshare.ConnectionConstants;
+import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 
 /**
@@ -32,13 +33,13 @@ public class FileUploaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Uri uri = intent.getExtras().getParcelable("fileURI");
+        Uri uri = intent.getExtras().getParcelable(getString(R.string.file_uri_handle));
         if (uri == null) {
             Log.d(TAG, "Error getting a null fileURI");
             return;
         }
         FileUri fileUri = new FileUri(this, uri);
-        Connection connection = (Connection) intent.getExtras().getSerializable("connection");
+        Connection connection = (Connection) intent.getExtras().getSerializable(getString(R.string.connection_handle));
         if (connection == null) {
             Log.d(TAG, "Error getting a null connection");
             return;
@@ -56,7 +57,7 @@ public class FileUploaderService extends IntentService {
                 }
                 break;
             default:
-                Log.e(TAG, "Protocol " + connection.protocol + " not implemented =(");
+                Log.e(TAG, "Protocol " + connection.protocol + " not implemented");
         }
     }
 }

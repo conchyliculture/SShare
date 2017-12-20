@@ -61,10 +61,10 @@ public class NewAccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle b = this.getIntent().getBundleExtra("data");
+        Bundle b = this.getIntent().getBundleExtra(getString(R.string.file_uri_handle));
 
         if (b != null) {
-            this.connection = (Connection) b.getSerializable("connection");
+            this.connection = (Connection) b.getSerializable(getString(R.string.connection_handle));
             if (this.connection != null) {
                 isAddingNewConnection = false;
             }
@@ -141,13 +141,13 @@ public class NewAccountActivity extends AppCompatActivity {
                 AlertDialog.Builder builderSingle = new AlertDialog.Builder(NewAccountActivity.this);
                 // TODO: get a nice icon
                 // builderSingle.setIcon(R.drawable.ic_launcher);
-                builderSingle.setTitle("Select Key");
+                builderSingle.setTitle(getString(R.string.select_key_message_button));
                 final ArrayList<File> keyFilesList = ManagePubKeysActivity.getPubKeysList(NewAccountActivity.this);
                 final ArrayAdapter<String> keyFilesAdapter = new ArrayAdapter<>(NewAccountActivity.this, android.R.layout.select_dialog_singlechoice);
                 for (File key : keyFilesList) {
                     keyFilesAdapter.add(key.getName());
                 }
-                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                builderSingle.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -204,12 +204,12 @@ public class NewAccountActivity extends AppCompatActivity {
                     break;
                 case ENUM_AUTH_KEY:
                     privateKeyFile = new File(connection.key);
-                    String buttonMsg = "Change key (current: " + privateKeyFile.getName() + ")";
+                    String buttonMsg = getString(R.string.change_key_button_text,privateKeyFile.getName());
                     selectKeyButton.setText(buttonMsg);
                     break;
             }
             inputRemotePath.setText(connection.remotePath);
-            submitButton.setText(R.string.update_connection);
+            submitButton.setText(R.string.update_connection_button_text);
         }
     }
 

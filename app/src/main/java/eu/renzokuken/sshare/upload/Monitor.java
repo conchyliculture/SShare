@@ -33,9 +33,9 @@ class Monitor {
             Random r = new Random();
             notificationId = r.nextInt(685463535); // lol
             notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id));
-            notificationBuilder.setContentTitle("Uploading '" + fileUri.fileName + "' (SShare)")
+            notificationBuilder.setContentTitle(context.getString(R.string.uploading_filename, fileUri.fileName))
                     .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
-                    .setContentText("Preparing connection");
+                    .setContentText(context.getString(R.string.preparing_connection));
             notificationManager.notify(notificationId, notificationBuilder.build());
         } else {
             Log.e(TAG, "Notification manager is null =(");
@@ -65,14 +65,12 @@ class Monitor {
         notificationBuilder.setProgress(0, 0, false);
         notificationManager.notify(notificationId, notificationBuilder.build());
 
-        String message = "Finished uploading " + fileUri.fileName;
-        updateNotificationSubText(message);
+        updateNotificationSubText(context.getString(R.string.upload_finished, fileUri.fileName));
         // TODO: remove the notification after like 3 secs
     }
 
     void error(String message, Throwable e) {
         updateNotificationSubText(message);
-        Log.e(TAG, "Got error " + message);
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         e.printStackTrace();
     }

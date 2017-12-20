@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 
 
@@ -39,11 +40,11 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
             sftp.put(new SSHJLocalSourceFile(fileUri), destinationFile.getPath());
             //sftp.chmod(destinationFile.getPath(), 600); // TODO do a umask thing
         } catch (ConnectionException e) {
-            throw new SShareUploadException("Connection closed unexpectedly", e);
+            throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
         } catch (SFTPException e) {
             switch (e.getStatusCode()) {
                 case PERMISSION_DENIED:
-                    throw new SShareUploadException("SFTP server said: 'Permission Denied'");
+                    throw new SShareUploadException(context.getString(R.string.error_sftp_permission_denied));
 
                 case UNKNOWN:
                 case OK:
@@ -54,14 +55,14 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
                 case NO_CONNECTION:
                 case CONNECITON_LOST:
                 case OP_UNSUPPORTED:
-                    throw new SShareUploadException("SFTP server error", e);
+                    throw new SShareUploadException(context.getString(R.string.error_sftp_error), e);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            throw new SShareUploadException("Connection closed unexpectedly", e);
+            throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
         } catch (SecurityException e) {
             e.printStackTrace();
-            throw new SShareUploadException("Permission error", e);
+            throw new SShareUploadException(context.getString(R.string.error_permission_error), e);
         }
     }
 
