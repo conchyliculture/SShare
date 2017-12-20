@@ -197,9 +197,9 @@ public class NewAccountActivity extends AppCompatActivity {
             authSpinner.setSelection(ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode).getId());
             inputHostname.setText(connection.hostname);
             inputPort.setText(String.valueOf(connection.port));
+            inputLogin.setText(connection.username);
             switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
                 case ENUM_AUTH_LP:
-                    inputLogin.setText(connection.username);
                     inputPassword.setText(connection.password);
                     break;
                 case ENUM_AUTH_KEY:
