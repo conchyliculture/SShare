@@ -32,6 +32,7 @@ class Monitor {
         // TODO: cancelable uploads
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id));
+        notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
         if (notificationManager != null) {
             Random r = new Random();
             notificationId = r.nextInt(685463535); // lol

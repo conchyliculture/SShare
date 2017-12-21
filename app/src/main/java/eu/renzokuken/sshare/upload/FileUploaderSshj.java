@@ -142,12 +142,18 @@ abstract class FileUploaderSshj {
     }
 
     public void uploadFile(FileUri fileUri) throws SShareUploadException {
-        monitor.updateNotificationStart(fileUri.fileName);
         SSHClient ssh = _Connect();
+        if (ssh == null || !ssh.isConnected()) {
+            // No SShareUploadException thrown, we most likely have said no to the host key
+            monitor.updateNotificationError(context.getString(R.string.error_connection_failed, connection.getHostString()),
+                    context.getString(R.string.error_user_did_not_recognize_key));
+            return;
+        }
         _Authenticate(ssh);
         if (!ssh.isConnected()) {
             throw new SShareUploadException(context.getString(R.string.error_could_not_connect));
         }
+        monitor.updateNotificationStart(fileUri.fileName);
         _Push(ssh, fileUri, connection.remotePath);
         _Cleanup(ssh);
     }
