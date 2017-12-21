@@ -23,7 +23,6 @@ android {
 
 dependencies {
     compile 'net.schmizz:sshj:0.10.0'
-
     compile 'com.madgag.spongycastle:core:1.58.0.0'
     compile 'com.madgag.spongycastle:prov:1.58.0.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])

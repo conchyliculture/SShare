@@ -103,7 +103,7 @@ public class ManagePrivateKeysActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(Intent.createChooser(intent,getString(R.string.select_file_chooser_title)), FILE_SELECT_CODE);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file_chooser_title)), FILE_SELECT_CODE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,12 +113,11 @@ public class ManagePrivateKeysActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == FILE_SELECT_CODE) {
-            if (resultCode == RESULT_OK) {
-                Uri keyFileUri = data.getData();
+        if (requestCode == FILE_SELECT_CODE && resultCode == RESULT_OK) {
+            Uri keyFileUri = data.getData();
+            if (keyFileUri != null) {
                 File file = copyToStorage(keyFileUri);
-                boolean result = isValidKeyFile(file);
-                if (result) {
+                if (isValidKeyFile(file)) {
                     Toast.makeText(this, getString(R.string.error_unable_to_load_key, keyFileUri.getPath()), Toast.LENGTH_LONG).show();
                 }
             }
@@ -131,6 +130,9 @@ public class ManagePrivateKeysActivity extends AppCompatActivity {
         try {
             OutputStream outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
             InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                throw new IOException("Couldn't open openInputStream("+uri+")");
+            }
             try {
                 byte[] buffer = new byte[4 * 1024]; // or other buffer size
                 int read;
