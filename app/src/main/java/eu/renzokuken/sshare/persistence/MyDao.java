@@ -1,6 +1,7 @@
 package eu.renzokuken.sshare.persistence;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
@@ -19,8 +20,8 @@ public interface MyDao {
     @Update
     void updateConnection(Connection... connections);
 
-//    @Delete
-//    void deleteConnection(Connection... connections);
+    @Delete
+    void deleteConnection(Connection... connections);
 
     @Query("SELECT * FROM connection")
     List<Connection> getAllConnections();

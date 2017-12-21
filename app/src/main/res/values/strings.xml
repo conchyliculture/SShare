@@ -78,6 +78,9 @@
     <string name="select_connection_title">Select Connection to use</string>
     <string name="edit_connection_title">Edit Connection</string>
     <string name="new_connection_title">New Connection</string>
+    <string name="default_port_number">22</string>
+    <string name="attention_title">Attention!</string>
+    <string name="connection_delete_confirmation_message">Are you sure you want to delete %1$s?</string>
 
 
     <string-array name="pref_host_key_checking_mode_titles">

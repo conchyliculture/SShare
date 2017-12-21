@@ -1,7 +1,9 @@
 package eu.renzokuken.sshare.ui;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,20 +28,21 @@ import eu.renzokuken.sshare.upload.FileUploaderService;
 
 public class ConnectionListFragment extends ListFragment {
 
-    private MainActivity mainActivity;
+    private MainActivity mainActivity ;
+    private ArrayList<Connection> connectionList;
 
-    private List<Connection> getConnectionList() {
-         mainActivity = (MainActivity) getActivity();
-        return mainActivity.getConnectionList();
+    private void removeConnection(Connection connection){
+        mainActivity.getDatabaseHandler().deleteConnection(connection);
+        connectionList.remove(connection);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        List<Connection> connectionList = getConnectionList();
+        mainActivity = (MainActivity) getActivity();
+        connectionList = mainActivity.getConnectionList();
         // TODO  make something better than simple_list_item_1
-        ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1, connectionList);
+        final ConnectionAdapter connectionListAdapter = new ConnectionAdapter(this.getActivity(), android.R.layout.simple_list_item_1, connectionList);
         setListAdapter(connectionListAdapter);
         ListView listView = getListView();
         Intent intent = getActivity().getIntent();
@@ -53,6 +56,28 @@ public class ConnectionListFragment extends ListFragment {
             TextView connectionListTextView = mainActivity.findViewById(R.id.connection_list_text_view);
             connectionListTextView.setText(getString(R.string.connection_list_title));
             listView.setOnItemClickListener(new EditConnectionOnItemClickListener());
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    final Connection connection = connectionList.get(position);
+                    AlertDialog.Builder builderSingle = new AlertDialog.Builder(mainActivity);
+                    builderSingle.setIcon(R.drawable.ic_info_black_24dp);
+                    builderSingle.setTitle(getString(R.string.attention_title));
+                    builderSingle.setMessage(getString(R.string.connection_delete_confirmation_message, connection.getHostString()));
+                    builderSingle.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            removeConnection(connection);
+                            connectionListAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    builderSingle.setCancelable(true);
+                    builderSingle.setNegativeButton(android.R.string.no, null);
+                    builderSingle.show();
+
+                    return true;
+                }
+            });
         }
     }
 

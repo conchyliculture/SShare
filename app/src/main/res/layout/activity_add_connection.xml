@@ -115,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/port_textview_hint"
                     android:inputType="number"
+                    android:text="@string/default_port_number"
                     android:textAppearance="@android:style/TextAppearance.Material.Medium" />
             </android.support.design.widget.TextInputLayout>
 

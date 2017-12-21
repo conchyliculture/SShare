@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 import eu.renzokuken.sshare.persistence.MyDB;
+import eu.renzokuken.sshare.persistence.MyDao;
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public ArrayList<Connection> getConnectionList() {
+    public MyDao getDatabaseHandler() {
         MyDB database = MyDB.getDatabase(getApplicationContext());
-        return new ArrayList<>(database.connectionDao().getAllConnections());
+        return database.connectionDao();
+    }
+
+    public ArrayList<Connection> getConnectionList() {
+
+        return new ArrayList<>(getDatabaseHandler().getAllConnections());
     }
 
     @Override
