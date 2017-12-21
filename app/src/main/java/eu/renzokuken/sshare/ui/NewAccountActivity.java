@@ -148,14 +148,14 @@ public class NewAccountActivity extends AppCompatActivity {
                 // TODO: get a nice icon
                 // builderSingle.setIcon(R.drawable.ic_launcher);
 
-                final ArrayList<File> keyFilesList = ManagePubKeysActivity.getPubKeysList(NewAccountActivity.this);
+                final ArrayList<File> keyFilesList = ManagePrivateKeysActivity.getPubKeysList(NewAccountActivity.this);
                 if (keyFilesList.isEmpty()) {
                     builderSingle.setTitle(getString(R.string.no_private_key_title));
                     builderSingle.setMessage(getString(R.string.no_private_key_message));
                     builderSingle.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent keyIntent = new Intent(NewAccountActivity.this, ManagePubKeysActivity.class);
+                            Intent keyIntent = new Intent(NewAccountActivity.this, ManagePrivateKeysActivity.class);
                             startActivity(keyIntent);
                         }
                     });

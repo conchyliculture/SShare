@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(sIntent);
                 return true;
             case R.id.menu_manage_keys:
-                Intent pIntent = new Intent(this, ManagePubKeysActivity.class);
+                Intent pIntent = new Intent(this, ManagePrivateKeysActivity.class);
                 startActivity(pIntent);
                 return true;
             default:

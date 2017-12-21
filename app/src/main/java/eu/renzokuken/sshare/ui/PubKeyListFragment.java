@@ -36,7 +36,7 @@ public class PubKeyListFragment extends ListFragment {
     }
 
     private ArrayList<File> getPubKeysList() {
-        return ManagePubKeysActivity.getPubKeysList(getActivity());
+        return ManagePrivateKeysActivity.getPubKeysList(getActivity());
     }
 
     private class PubKeysAdapter extends ArrayAdapter<File> {

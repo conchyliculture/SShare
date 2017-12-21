@@ -17,6 +17,10 @@
     <string name="create_button_text">Create</string>
     <string name="no_connection_textview">No connection. Please add some!</string>
     <string name="private_key_text_view">No private key. Please add some!</string>
+    <string name="no_private_key_help1">To add private key, use the menu and import a private key from your device.</string>
+    <string name="no_private_key_help2">To generate this key, use ssh-keygen, for example:</string>
+    <string name="no_private_key_help3">ssh-keygen -t rsa -b 2048 -f sshare_key</string>
+    <string name="no_private_key_help4">Push the resulting sshare_key file (which is the private key) to this device, and use the file sshare_key.pub (which is the public key) on your remote server (ie in a ~/.ssh/authorized_keys).</string>
     <string name="manage_private_keys_menu_text">Manage private keys</string>
     <string name="settings_menu_text">Settings</string>
     <string name="import_key_menu_text">Import private key</string>
@@ -48,6 +52,14 @@
     <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
     <string name="no_private_key_title">No private key found!</string>
     <string name="no_private_key_message">Please add some private key to use.</string>
+    <string name="select_connection_title">Select Connection to use</string>
+    <string name="edit_connection_title">Edit Connection</string>
+    <string name="new_connection_title">New Connection</string>
+    <string name="default_port_number">22</string>
+    <string name="attention_title">Attention!</string>
+    <string name="connection_delete_confirmation_message">Are you sure you want to delete %1$s?</string>
+    <string name="message_handle">message_handle</string>
+    <string name="unknown_host_key">Unknown Host Key</string>
 
 
     <!-- Strings related to intent extra keys -->
@@ -55,8 +67,6 @@
     <string name="file_uri_handle">file_uri_handle</string>
     <string name="data_handle">data_handle</string>
     <string name="title_handle">title_handle</string>
-    <string name="message_handle">message_handle</string>
-    <string name="unknown_host_key">Unknown Host Key</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
@@ -75,13 +85,6 @@
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
-    <string name="select_connection_title">Select Connection to use</string>
-    <string name="edit_connection_title">Edit Connection</string>
-    <string name="new_connection_title">New Connection</string>
-    <string name="default_port_number">22</string>
-    <string name="attention_title">Attention!</string>
-    <string name="connection_delete_confirmation_message">Are you sure you want to delete %1$s?</string>
-
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import net.schmizz.sshj.userauth.keyprovider.KeyFormat;
@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.upload.FileUri;
 
-public class ManagePubKeysActivity extends AppCompatActivity {
+public class ManagePrivateKeysActivity extends AppCompatActivity {
 
-    private static final String TAG = "ManagePubKeysActivity";
+    private static final String TAG = "ManageKeysActivity";
     private static final int FILE_SELECT_CODE = 1;
 
     private static boolean isValidKeyFile(File file) {
@@ -70,7 +70,7 @@ public class ManagePubKeysActivity extends AppCompatActivity {
         ArrayList<File> pubKeysList = getPubKeysList(this);
 
         if (pubKeysList.isEmpty()) {
-            TextView noPubKeyTextView = findViewById(R.id.no_pubkey_textview);
+            LinearLayout noPubKeyTextView = findViewById(R.id.manager_private_key_text_layout);
             if (noPubKeyTextView != null) {
                 noPubKeyTextView.setVisibility(View.VISIBLE);
             }
@@ -79,7 +79,7 @@ public class ManagePubKeysActivity extends AppCompatActivity {
             FragmentManager fragMan = getFragmentManager();
             FragmentTransaction fragTransaction = fragMan.beginTransaction();
             PubKeyListFragment pubKeyListFragment = new PubKeyListFragment();
-            fragTransaction.add(R.id.manager_pubkey_activity_container, pubKeyListFragment);
+            fragTransaction.add(R.id.manager_private_keys_activity_container, pubKeyListFragment);
             fragTransaction.commit();
         }
     }

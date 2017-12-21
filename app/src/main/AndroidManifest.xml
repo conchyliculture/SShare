@@ -42,7 +42,7 @@
         <activity
             android:name=".ui.PopupActivity"
             android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
-        <activity android:name=".ui.ManagePubKeysActivity" />
+        <activity android:name=".ui.ManagePrivateKeysActivity" />
     </application>
 
 </manifest>
