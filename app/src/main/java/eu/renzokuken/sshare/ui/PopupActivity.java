@@ -9,6 +9,7 @@ import android.os.Message;
 
 import eu.renzokuken.sshare.R;
 
+
 /**
  * Created by renzokuken on 13/12/17.
  */
@@ -22,8 +23,7 @@ public class PopupActivity extends Activity {
         super.onCreate(savedInstanceState);
         String question = null;
         String title = getString(R.string.question_popup_title);
-
-        if (getIntent().hasExtra(getString(R.string.question_handle))) {
+        if (getIntent().hasExtra(getString(R.string.message_handle))) {
             title = getIntent().getStringExtra(getString(R.string.title_handle));
             question = getIntent().getStringExtra(getString(R.string.message_handle));
         }
@@ -42,6 +42,15 @@ public class PopupActivity extends Activity {
                     .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            Message msg = Message.obtain();
+                            msg.arg1 = 0;
+                            handler.dispatchMessage(msg);
+                            quit();
+                        }
+                    }).setCancelable(true)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
                             Message msg = Message.obtain();
                             msg.arg1 = 0;
                             handler.dispatchMessage(msg);
