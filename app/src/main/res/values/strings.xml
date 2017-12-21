@@ -1,6 +1,5 @@
 <resources>
     <!-- Generic UI Strings -->
-
     <string name="app_name">SShare</string>
     <string name="sftp_protocol">SFTP</string>
     <string name="password_authentication">Password</string>
@@ -60,17 +59,16 @@
     <string name="connection_delete_confirmation_message">Are you sure you want to delete %1$s?</string>
     <string name="message_handle">message_handle</string>
     <string name="unknown_host_key">Unknown Host Key</string>
-
+    <string name="key_file_delete_confirmation_message">Are you sure you want to delete key %1$s?</string>
+    <string name="error_could_not_delete_key_file">Could not delete key file %1$s</string>
 
     <!-- Strings related to intent extra keys -->
     <string name="connection_handle">connection_handle</string>
     <string name="file_uri_handle">file_uri_handle</string>
     <string name="data_handle">data_handle</string>
     <string name="title_handle">title_handle</string>
-
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
-
     <!-- General settings -->
     <string name="pref_file_already_exists">When a file already exists</string>
     <string-array name="pref_file_already_exists_titles">
@@ -85,7 +83,6 @@
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
-
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>
         <item>No Check</item>
