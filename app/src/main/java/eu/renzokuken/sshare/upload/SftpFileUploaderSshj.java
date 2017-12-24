@@ -50,12 +50,16 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
                 case OK:
                 case EOF:
                 case NO_SUCH_FILE:
+                    throw new SShareUploadException(
+                            context.getString(R.string.error_uploading_file, fileUri.fileName),
+                            context.getString(R.string.error_sftp_no_such_file)
+                    );
                 case FAILURE:
                 case BAD_MESSAGE:
                 case NO_CONNECTION:
                 case CONNECITON_LOST:
                 case OP_UNSUPPORTED:
-                    throw new SShareUploadException(context.getString(R.string.error_sftp_error), e);
+                    throw new SShareUploadException(context.getString(R.string.error_sftp_generic), e);
             }
         } catch (IOException e) {
             e.printStackTrace();

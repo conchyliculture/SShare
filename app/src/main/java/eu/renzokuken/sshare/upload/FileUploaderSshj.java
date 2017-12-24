@@ -154,8 +154,18 @@ abstract class FileUploaderSshj {
             throw new SShareUploadException(context.getString(R.string.error_could_not_connect));
         }
         monitor.updateNotificationStart(fileUri.fileName);
-        _Push(ssh, fileUri, connection.remotePath);
-        _Cleanup(ssh);
+
+        try {
+            _Push(ssh, fileUri, connection.getRemotePath());
+            _Cleanup(ssh);
+        } catch (SShareUploadException e) {
+            try {
+                ssh.disconnect();
+            } catch (IOException e1) {
+                throw new SShareUploadException("Error closing ssh client", e1);
+            }
+            throw e;
+        }
     }
 
     protected abstract void _Push(SSHClient ssh, FileUri fileUri, String destinationPath) throws SShareUploadException;

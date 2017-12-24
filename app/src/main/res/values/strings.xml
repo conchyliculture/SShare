@@ -46,7 +46,7 @@
     <string name="upload_finished">Finished uploading %1$s</string>
     <string name="error_permission_error">Permission error.</string>
     <string name="error_connection_closed">Connection closed unexpectedly</string>
-    <string name="error_sftp_error">SFTP server error.</string>
+    <string name="error_sftp_generic">SFTP server error.</string>
     <string name="connection_list_title">Connection List</string>
     <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
     <string name="no_private_key_title">No private key found!</string>
@@ -85,6 +85,8 @@
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
+    <string name="error_sftp_no_such_file">Error: \"No such file\". Check your remote path</string>
+    <string name="error_uploading_file">Error uploading %1$s</string>
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

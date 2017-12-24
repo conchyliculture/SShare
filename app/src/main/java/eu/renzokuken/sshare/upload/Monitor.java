@@ -99,8 +99,11 @@ class Monitor {
     }
 
     void error(final SShareUploadException e) {
-        updateNotificationError(e.customMessage, e.getCause().getLocalizedMessage());
-        String toastText = e.customMessage + " (" + e.getCause().getLocalizedMessage() + ")";
+        updateNotificationError(e.simpleMessage, e.detailsMessage);
+        String toastText = e.detailsMessage;
+        if (e.getCause() != null) {
+            toastText+= " (Caused by: " + e.getCause().getLocalizedMessage() + ")";
+        }
         showToastInUiThread(context, toastText);
         e.printStackTrace();
     }

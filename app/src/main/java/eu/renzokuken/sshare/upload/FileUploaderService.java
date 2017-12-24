@@ -35,18 +35,17 @@ public class FileUploaderService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Uri uri = intent.getExtras().getParcelable(getString(R.string.file_uri_handle));
         if (uri == null) {
-            Log.d(TAG, "Error getting a null fileURI");
+            Log.e(TAG, "Error getting a null fileURI");
             return;
         }
         FileUri fileUri = new FileUri(this, uri);
         Connection connection = (Connection) intent.getExtras().getSerializable(getString(R.string.connection_handle));
         if (connection == null) {
-            Log.d(TAG, "Error getting a null connection");
+            Log.e(TAG, "Error getting a null connection");
             return;
         }
 
         Monitor monitor = new Monitor(this, fileUri);
-
         switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
             case ENUM_PROTO_SFTP:
                 SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, connection, monitor); // important d'avoir l'app context
