@@ -4,13 +4,15 @@ import android.content.Context;
 import android.util.SparseArray;
 
 import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Created by renzokuken on 05/12/17.
  */
 
 public class ConnectionConstants {
-    final private static String PROTO_SFTP = "SFTP";
+    final private static String PROTO_SFTP = "sftp";
     final private static String AUTH_LP = "auth_lp";
     public static final String DEFAULT_AUTH_MODE = AUTH_LP;
     final private static String AUTH_KEY = "auth_key";

@@ -24,12 +24,25 @@ public class Connection implements Serializable {
     public String protocol;
     public String auth_mode;
 
-    public String toString() {
+    public String getRemotePath() {
         if (this.remotePath==null || this.remotePath.isEmpty()) {
+            return null;
+        } else {
+            if (remotePath.startsWith("~/")) {
+                return String.format("/home/%1$s/%2$s", username, remotePath.substring(2));
+            }
+        }
+
+        return this.remotePath;
+    }
+
+    public String toString() {
+
+        if (getRemotePath()==null) {
             return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.port;
         } else {
-            return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.port + "/" + remotePath;
 
+            return this.protocol + "://" + this.username + "@" + this.hostname + ":" + this.port + getRemotePath();
         }
     }
 
