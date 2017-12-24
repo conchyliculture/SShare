@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hostname_textview_hint"
-                    android:inputType="text"
+                    android:inputType="textNoSuggestions"
                     android:textAppearance="@android:style/TextAppearance.Material.Medium" />
             </android.support.design.widget.TextInputLayout>
 
@@ -151,7 +151,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/username_textview_hint"
-                android:inputType="text" />
+                android:inputType="textNoSuggestions" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -209,7 +209,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/remote_path_textview_hint"
-                android:inputType="text" />
+                android:inputType="textNoSuggestions" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
