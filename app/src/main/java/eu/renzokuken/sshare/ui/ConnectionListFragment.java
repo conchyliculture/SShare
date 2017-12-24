@@ -111,6 +111,7 @@ public class ConnectionListFragment extends ListFragment {
                     fileURIs.add((Uri) p);
                 }
             }
+
         }
 
         @Override
@@ -118,8 +119,10 @@ public class ConnectionListFragment extends ListFragment {
             Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
             for (Uri fileURI : fileURIs) {
                 Intent intent = new Intent(getActivity(), FileUploaderService.class);
-                intent.putExtra(getString(R.string.file_uri_handle), fileURI);
+                intent.setData(fileURI);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(getString(R.string.connection_handle), connection);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); //Pass permission from content provider
                 getActivity().startService(intent);
                 getActivity().finish();
             }

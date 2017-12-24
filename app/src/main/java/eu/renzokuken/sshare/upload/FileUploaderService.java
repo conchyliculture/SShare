@@ -33,7 +33,7 @@ public class FileUploaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Uri uri = intent.getExtras().getParcelable(getString(R.string.file_uri_handle));
+        Uri uri = intent.getData();
         if (uri == null) {
             Log.e(TAG, "Error getting a null fileURI");
             return;
