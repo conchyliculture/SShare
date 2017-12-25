@@ -22,7 +22,7 @@ import eu.renzokuken.sshare.R;
  * Created by renzokuken on 18/12/17.
  */
 
-public class PubKeyListFragment extends ListFragment {
+public class PrivateKeyListFragment extends ListFragment {
 
     private PubKeysAdapter pubKeysListAdapter;
 
@@ -40,7 +40,7 @@ public class PubKeyListFragment extends ListFragment {
 
         final List<File> pubKeysList = getPubKeysList();
         // TODO  make something better than simple_list_item_1
-        pubKeysListAdapter = new PubKeyListFragment.PubKeysAdapter(this.getActivity(), android.R.layout.simple_list_item_1, pubKeysList);
+        pubKeysListAdapter = new PrivateKeyListFragment.PubKeysAdapter(this.getActivity(), android.R.layout.simple_list_item_1, pubKeysList);
         setListAdapter(pubKeysListAdapter);
 
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -77,6 +77,7 @@ public class PubKeyListFragment extends ListFragment {
         } else {
             pubKeysListAdapter.remove(keyFile);
         }
+        getActivity().recreate();
     }
 
     private ArrayList<File> getPubKeysList() {

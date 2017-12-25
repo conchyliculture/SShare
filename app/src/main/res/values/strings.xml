@@ -10,6 +10,7 @@
     <string name="hostname_textview_hint">Hostname</string>
     <string name="port_textview_hint">Port</string>
     <string name="colon">:</string>
+    <string name="private_keys_textview" >Private keys list:</string>
     <string name="username_textview_hint">Username</string>
     <string name="password_textview_hint">Password</string>
     <string name="remote_path_textview_hint">Remote path (leave empty for default)</string>
@@ -23,7 +24,7 @@
     <string name="manage_private_keys_menu_text">Manage private keys</string>
     <string name="settings_menu_text">Settings</string>
     <string name="import_key_menu_text">Import private key</string>
-    <string name="update_connection_button_text">Update</string>
+    <string name="update_connection_button_text">Save changes</string>
     <string name="select_file_chooser_title">Select file</string>
     <string name="change_key_button_text">Change key (current: %1$s)</string>
     <string name="question_popup_title">Warning</string>

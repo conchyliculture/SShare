@@ -60,28 +60,29 @@ public class ManagePrivateKeysActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_pub_keys);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void loadViews() {
 
         ArrayList<File> pubKeysList = getPubKeysList(this);
 
         if (pubKeysList.isEmpty()) {
-            LinearLayout noPubKeyTextView = findViewById(R.id.manager_private_key_text_layout);
-            if (noPubKeyTextView != null) {
-                noPubKeyTextView.setVisibility(View.VISIBLE);
-            }
+            setContentView(R.layout.activity_manage_pub_keys_empty);
 
         } else {
+            setContentView(R.layout.activity_manage_pub_keys);
+
             FragmentManager fragMan = getFragmentManager();
             FragmentTransaction fragTransaction = fragMan.beginTransaction();
-            PubKeyListFragment pubKeyListFragment = new PubKeyListFragment();
+            PrivateKeyListFragment pubKeyListFragment = new PrivateKeyListFragment();
             fragTransaction.add(R.id.manager_private_keys_activity_container, pubKeyListFragment);
             fragTransaction.commit();
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadViews();
     }
 
     @Override
@@ -117,9 +118,10 @@ public class ManagePrivateKeysActivity extends AppCompatActivity {
             Uri keyFileUri = data.getData();
             if (keyFileUri != null) {
                 File file = copyToStorage(keyFileUri);
-                if (isValidKeyFile(file)) {
+                if (!isValidKeyFile(file)) {
                     Toast.makeText(this, getString(R.string.error_unable_to_load_key, keyFileUri.getPath()), Toast.LENGTH_LONG).show();
                 }
+                loadViews();
             }
         }
     }

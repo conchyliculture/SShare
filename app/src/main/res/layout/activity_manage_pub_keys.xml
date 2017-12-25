@@ -1,72 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/manager_private_keys_activity_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="eu.renzokuken.sshare.ui.ManagePrivateKeysActivity">
 
-    <LinearLayout
-        android:id="@+id/manager_private_key_text_layout"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/no_pubkey_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/private_key_text"
-            android:textAppearance="@android:style/TextAppearance.Material.Large" />
-
-        <TextView
-            android:id="@+id/no_pubkey_textview1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/no_private_key_help1"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
-
-        <TextView
-            android:id="@+id/no_pubkey_textview2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/no_private_key_help2"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
-
-        <TextView
-            android:id="@+id/no_pubkey_textview3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/no_private_key_help3"
-            android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-        <TextView
-            android:id="@+id/no_pubkey_textview4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/no_private_key_help4"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
-
-    </LinearLayout>
+        android:text="@string/private_keys_textview" />
 
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
