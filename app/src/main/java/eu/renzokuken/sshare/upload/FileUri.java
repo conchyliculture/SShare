@@ -21,10 +21,6 @@ public class FileUri implements Serializable {
 
     public FileUri(Context context, Uri fileUri) {
         this.context = context;
-        loadFileMetadata(fileUri);
-    }
-
-    private void loadFileMetadata(Uri fileUri) {
         this.uri = fileUri;
         Cursor returnCursor = context.getContentResolver().query(fileUri, null, null, null, null);
         if (returnCursor != null) {
@@ -38,7 +34,6 @@ public class FileUri implements Serializable {
             } catch (java.lang.IllegalStateException e) {
                 // pass
             }
-
             returnCursor.close();
         }
     }

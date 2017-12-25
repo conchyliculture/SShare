@@ -47,44 +47,6 @@ abstract class FileUploaderSshj {
                 context.getString(R.string.pref_host_key_checking_mode_default));
     }
 
-    private SSHClient _Connect() throws SShareUploadException {
-        SSHClient ssh = new SSHClient(new AndroidConfig());
-        SshjHostKeyVerifier sshjHostKeyVerifier = new SshjHostKeyVerifier(context);
-        monitor.updateNotificationTitleText(context.getString(R.string.connecting_to, connection.getHostString()));
-        try {
-            switch (getHostKeyCheckingPref()) {
-                case "NO":
-                    ssh.addHostKeyVerifier(new PromiscuousVerifier());
-                    break;
-                default:
-                    ssh.addHostKeyVerifier(sshjHostKeyVerifier);
-            }
-            ssh.connect(connection.hostname, connection.port);
-        } catch (ConnectException e) {
-            throw new SShareUploadException(context.getString(R.string.error_connection_timeout, connection.getHostString()), e);
-        } catch (TransportException e) {
-            if (e.getDisconnectReason().equals(DisconnectReason.HOST_KEY_NOT_VERIFIABLE)) {
-                PublicKey key = sshjHostKeyVerifier.getLastSeenKey();
-                boolean shouldAccept = askUser(
-                        context.getString(R.string.unknown_host_key),
-                        context.getString(R.string.warning_ask_fingerprint_trust, SecurityUtils.getFingerprint(key)));
-                if (shouldAccept) {
-                    sshjHostKeyVerifier.addKey(connection, key);
-                    ssh = _Connect();
-                } else {
-                    monitor.updateNotificationError(
-                            context.getString(R.string.upload_canceled),
-                            context.getString(R.string.remote_host_key_not_accepted));
-                }
-            } else {
-                throw new SShareUploadException(context.getString(R.string.error_disconnected_from_host, connection.getHostString()), e);
-            }
-        } catch (Exception e) {
-            throw new SShareUploadException(context.getString(R.string.error_connecting_to_host_with_msg, connection.getHostString()), e);
-        }
-        return ssh;
-    }
-
     private boolean askUser(String title, String question) {
         Intent intent = new Intent(context, PopupActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -107,8 +69,77 @@ abstract class FileUploaderSshj {
         return (handler.getResponse() == 1);
     }
 
+    public void uploadFile(FileUri fileUri) throws SShareUploadException {
+        monitor.notifyConnecting(connection.getHostString());
+        SSHClient ssh = _Connect();
+        if (ssh == null || !ssh.isConnected()) {
+            // No SShareUploadException thrown, we most likely have said no to the host key
+            monitor.notifyError(
+                    context.getString(R.string.error_connection_failed, connection.getHostString()),
+                    context.getString(R.string.error_user_did_not_recognize_key)
+            );
+            return;
+        }
+        monitor.notifyAuthenticating(connection.getHostString(), connection.username);
+        _Authenticate(ssh);
+        if (!ssh.isAuthenticated()) {
+            throw new SShareUploadException(context.getString(R.string.error_login_failed));
+        }
+        monitor.notifyUploadStart();
+        try {
+            _Push(ssh, fileUri, connection.getRemotePath());
+            _Cleanup(ssh);
+        } catch (SShareUploadException e) {
+            try {
+                ssh.disconnect();
+            } catch (IOException e1) {
+                throw new SShareUploadException("Error closing ssh client", e1);
+            }
+            throw e;
+        }
+    }
+
+    private SSHClient _Connect() throws SShareUploadException {
+        SSHClient ssh = new SSHClient(new AndroidConfig());
+        SshjHostKeyVerifier sshjHostKeyVerifier = new SshjHostKeyVerifier(context);
+        switch (getHostKeyCheckingPref()) {
+            case "NO":
+                ssh.addHostKeyVerifier(new PromiscuousVerifier());
+                break;
+            default:
+                ssh.addHostKeyVerifier(sshjHostKeyVerifier);
+        }
+        try {
+            ssh.connect(connection.hostname, connection.port);
+            return ssh;
+        } catch (ConnectException e) {
+            throw new SShareUploadException(
+                    context.getString(R.string.error_connection_timeout, connection.getHostString()),
+                    e);
+        } catch (TransportException e) {
+            if (e.getDisconnectReason().equals(DisconnectReason.HOST_KEY_NOT_VERIFIABLE)) {
+                PublicKey key = sshjHostKeyVerifier.getLastSeenKey();
+                boolean shouldAccept = askUser(
+                        context.getString(R.string.unknown_host_key),
+                        context.getString(R.string.warning_ask_fingerprint_trust, SecurityUtils.getFingerprint(key)));
+                if (!shouldAccept) {
+                    monitor.notifyError(
+                            context.getString(R.string.upload_canceled),
+                            context.getString(R.string.remote_host_key_not_accepted));
+                    return ssh;
+                }
+                sshjHostKeyVerifier.addKey(connection, key);
+                // Reconnect with the host key in the verifier
+                return _Connect();
+            } else {
+                throw new SShareUploadException(context.getString(R.string.error_disconnected_from_host, connection.getHostString()), e);
+            }
+        } catch (Exception e) {
+            throw new SShareUploadException(context.getString(R.string.error_connecting_to_host_with_msg, connection.getHostString()), e);
+        }
+    }
+
     private void _Authenticate(SSHClient ssh) throws SShareUploadException {
-        monitor.updateNotificationTitleText(context.getString(R.string.authenticating_to, connection.getHostString()));
         AuthMethod authMethod = null;
 
         switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
@@ -132,41 +163,14 @@ abstract class FileUploaderSshj {
         }
     }
 
+    protected abstract void _Push(SSHClient ssh, FileUri fileUri, String destinationPath) throws SShareUploadException;
+
     private void _Cleanup(SSHClient ssh) throws SShareUploadException {
         try {
             ssh.disconnect();
+            monitor.notifyFinish();
         } catch (IOException e) {
             throw new SShareUploadException(context.getString(R.string.error_cleanup), e);
         }
-        monitor.updateNotificationFinish();
     }
-
-    public void uploadFile(FileUri fileUri) throws SShareUploadException {
-        SSHClient ssh = _Connect();
-        if (ssh == null || !ssh.isConnected()) {
-            // No SShareUploadException thrown, we most likely have said no to the host key
-            monitor.updateNotificationError(context.getString(R.string.error_connection_failed, connection.getHostString()),
-                    context.getString(R.string.error_user_did_not_recognize_key));
-            return;
-        }
-        _Authenticate(ssh);
-        if (!ssh.isConnected()) {
-            throw new SShareUploadException(context.getString(R.string.error_could_not_connect));
-        }
-        monitor.updateNotificationStart(fileUri.fileName);
-
-        try {
-            _Push(ssh, fileUri, connection.getRemotePath());
-            _Cleanup(ssh);
-        } catch (SShareUploadException e) {
-            try {
-                ssh.disconnect();
-            } catch (IOException e1) {
-                throw new SShareUploadException("Error closing ssh client", e1);
-            }
-            throw e;
-        }
-    }
-
-    protected abstract void _Push(SSHClient ssh, FileUri fileUri, String destinationPath) throws SShareUploadException;
 }

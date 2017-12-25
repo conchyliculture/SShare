@@ -42,7 +42,8 @@
     <string name="connecting_to">Connecting to %1$s…</string>
     <string name="authenticating_to">Authenticating to %1$s…</string>
     <string name="upload_canceled">Upload cancelled</string>
-    <string name="uploading_filename">Uploading %1$s…</string>
+    <string name="upload_aborted">Upload aborted</string>
+    <string name="uploading_filename">Uploading %1$s</string>
     <string name="upload_finished">Finished uploading %1$s</string>
     <string name="error_permission_error">Permission error.</string>
     <string name="error_connection_closed">Connection closed unexpectedly</string>
@@ -66,7 +67,6 @@
 
     <!-- Strings related to intent extra keys -->
     <string name="connection_handle">connection_handle</string>
-    <string name="file_uri_handle">file_uri_handle</string>
     <string name="data_handle">data_handle</string>
     <string name="title_handle">title_handle</string>
     <!-- Strings related to Settings -->
@@ -90,6 +90,8 @@
     <string name="kill_uploads">Kill Uploads</string>
     <string name="new_upload">New Upload</string>
     <string name="user_cancelled_upload">Upload cancelled by user</string>
+    <string name="cancel">Cancel</string>
+    <string name="as_user">as user %1$s</string>
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

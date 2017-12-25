@@ -71,49 +71,49 @@ public class FileUploaderService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
-        if (action!=null) {
+        if (action != null) {
             if (action.equals(getString(R.string.new_upload))) {
                 newUpload(intent);
             } else if (action.equals(getString(R.string.kill_uploads))) {
-                killUploads();
+                for (Monitor monitor : monitorList) {
+                    monitor.shouldStop = true;
+                }
             }
         }
-        return START_NOT_STICKY;
-    }
-
-    private void killUploads() {
-        for (Monitor monitor : monitorList) {
-            monitor.shouldStop = true;
-        }
+        return START_NOT_STICKY; // TOdo check this
     }
 
     private void newUpload(Intent intent) {
         Uri uri = intent.getData();
         if (uri == null) {
             Log.e(TAG, "Error getting a null fileURI");
-        } else {
-            FileUri fileUri = new FileUri(this, uri);
-            Connection connection = null;
-            if (intent.hasExtra(getString(R.string.connection_handle))) {
-                connection = (Connection) intent.getSerializableExtra(getString(R.string.connection_handle));
-            }
-            if (connection == null) {
-                Log.e(TAG, "Error getting a null connection");
-            } else {
-                Monitor monitor = new Monitor(getApplicationContext(), fileUri);
-                FileUploaderSshj fileUploader;
-                switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
-                    case ENUM_PROTO_SFTP:
-                        fileUploader = new SftpFileUploaderSshj(getApplicationContext(), connection, monitor); // important d'avoir l'app context
-                        break;
-                    default:
-                        monitor.updateNotificationError("Protocol " + connection.protocol + " not implemented", "");
-                        return;
-                }
-                UploadRunnable task = new UploadRunnable(fileUploader, fileUri, monitor);
-                monitorList.add(monitor);
-                executorService.submit(task);
-            }
+            return;
         }
+        Connection connection = null;
+        if (intent.hasExtra(getString(R.string.connection_handle))) {
+            connection = (Connection) intent.getSerializableExtra(getString(R.string.connection_handle));
+        }
+        if (connection == null) {
+            Log.e(TAG, "Error getting a null connection");
+            return;
+        }
+
+        FileUri fileUri = new FileUri(this, uri);
+        Monitor monitor = new Monitor(getApplicationContext(), fileUri);
+        FileUploaderSshj fileUploader;
+        switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
+            case ENUM_PROTO_SFTP:
+                fileUploader = new SftpFileUploaderSshj(getApplicationContext(), connection, monitor); // important d'avoir l'app context
+                break;
+            default:
+                // Shouldn't happen anyway
+                monitor.notifyError("Protocol " + connection.protocol + " not implemented", null);
+                return;
+        }
+        UploadRunnable task = new UploadRunnable(fileUploader, fileUri, monitor);
+        monitorList.add(monitor);
+        executorService.submit(task);
+
+
     }
 }

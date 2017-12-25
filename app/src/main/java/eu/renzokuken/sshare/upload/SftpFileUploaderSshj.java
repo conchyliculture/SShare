@@ -39,21 +39,21 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
             }
             sftp.put(new SSHJLocalSourceFile(fileUri), destinationFile.getPath());
             //sftp.chmod(destinationFile.getPath(), 600); // TODO do a umask thing
+            // TODO change modified date if needed
         } catch (ConnectionException e) {
             throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
         } catch (SFTPException e) {
             switch (e.getStatusCode()) {
                 case PERMISSION_DENIED:
                     throw new SShareUploadException(context.getString(R.string.error_sftp_permission_denied));
-
-                case UNKNOWN:
-                case OK:
-                case EOF:
                 case NO_SUCH_FILE:
                     throw new SShareUploadException(
                             context.getString(R.string.error_uploading_file, fileUri.fileName),
                             context.getString(R.string.error_sftp_no_such_file)
                     );
+                case UNKNOWN:
+                case OK:
+                case EOF:
                 case FAILURE:
                 case BAD_MESSAGE:
                 case NO_CONNECTION:
@@ -68,11 +68,9 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
                 throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
             }
         } catch (SecurityException e) {
-            e.printStackTrace();
             throw new SShareUploadException(context.getString(R.string.error_permission_error), e);
         }
     }
-
 
     private class SSHJLocalSourceFile implements LocalSourceFile {
         // TODO extends parent class?
@@ -140,7 +138,7 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
 
         public void setTransferListener(TransferListener transferListener) {
             this.getFileTransfer().setTransferListener(transferListener);
-            this.getFileTransfer().setPreserveAttributes(false); // TODO
+            this.getFileTransfer().setPreserveAttributes(false);
         }
     }
 
@@ -162,13 +160,13 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
 
                 @Override
                 public void reportProgress(long transferred) throws IOException {
-                    monitor.progress(transferred);
+                    monitor.notifyProgress(transferred);
                     if (monitor.shouldStop) {
+                        // Interrupt transfer
                         throw new IOException();
                     }
                 }
             };
         }
-
     }
 }
