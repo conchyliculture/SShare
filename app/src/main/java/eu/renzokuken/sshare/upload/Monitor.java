@@ -120,6 +120,7 @@ class Monitor {
                 .setContentText(null)
                 .setSmallIcon(R.drawable.ic_done_black_24dp)
                 .setOngoing(false);
+        notificationBuilder.mActions.clear();
         notificationManager.notify(notificationId, notificationBuilder.build());
         // TODO: remove the notification after like 3 secs
     }
@@ -128,6 +129,7 @@ class Monitor {
                 .setOngoing(false)
                 .setSmallIcon(R.drawable.ic_error_black_24dp)
                 .setProgress(0, 0, false);
+        notificationBuilder.mActions.clear();
         if (errorSubText!=null) {
             notificationBuilder.setContentText(errorSubText);
         }
