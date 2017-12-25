@@ -42,6 +42,9 @@
         <activity
             android:name=".ui.PopupActivity"
             android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
+        <activity
+            android:name=".ui.AskPassphraseActivity"
+            android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
         <activity android:name=".ui.ManagePrivateKeysActivity" />
     </application>
 

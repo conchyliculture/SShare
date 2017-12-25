@@ -14,7 +14,9 @@ import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.userauth.method.AuthMethod;
 import net.schmizz.sshj.userauth.method.AuthPassword;
 import net.schmizz.sshj.userauth.method.AuthPublickey;
+import net.schmizz.sshj.userauth.password.PasswordFinder;
 import net.schmizz.sshj.userauth.password.PasswordUtils;
+import net.schmizz.sshj.userauth.password.Resource;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -23,6 +25,7 @@ import java.security.PublicKey;
 import eu.renzokuken.sshare.ConnectionConstants;
 import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
+import eu.renzokuken.sshare.ui.AskPassphraseActivity;
 import eu.renzokuken.sshare.ui.PopupActivity;
 
 
@@ -67,6 +70,22 @@ abstract class FileUploaderSshj {
         }
 
         return (handler.getResponse() == 1);
+    }
+
+    private String askPassphrase(String key) {
+        Intent intent = new Intent(context, AskPassphraseActivity.class);
+        intent.putExtra(context.getString(R.string.private_key_filename_handle), key);
+        context.startActivity(intent);
+        String result = AskPassphraseActivity.handler.getResponse();
+        while (result == null) {
+            try {
+                Thread.sleep(200);
+                result = AskPassphraseActivity.handler.getResponse();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return (result);
     }
 
     public void uploadFile(FileUri fileUri) throws SShareUploadException {
@@ -145,7 +164,7 @@ abstract class FileUploaderSshj {
         switch (ConnectionConstants.AuthenticationMethod.findByDbKey(connection.auth_mode)) {
             case ENUM_AUTH_KEY:
                 try {
-                    authMethod = new AuthPublickey(ssh.loadKeys(connection.key));
+                    authMethod = new AuthPublickey(ssh.loadKeys(connection.key, new MyPasswordFinder(connection.key)));
                 } catch (IOException e) {
                     throw new SShareUploadException(context.getString(R.string.error_unable_to_load_key, connection.key), e);
                 }
@@ -171,6 +190,34 @@ abstract class FileUploaderSshj {
             monitor.notifyFinish();
         } catch (IOException e) {
             throw new SShareUploadException(context.getString(R.string.error_cleanup), e);
+        }
+    }
+
+    private class MyPasswordFinder implements PasswordFinder {
+
+        private static final int MAX_NUM_TRIES = 3;
+        private final String privateKeyFilename;
+        private int numTries;
+
+        MyPasswordFinder(String privateKeyFilename) {
+            this.numTries = 0;
+            this.privateKeyFilename = privateKeyFilename;
+        }
+
+        @Override
+        public char[] reqPassword(Resource<?> resource) {
+            String result = askPassphrase(this.privateKeyFilename);
+            if (result.equals("")) {
+                // CLicked on "cancel", so we bail out
+                numTries+=MAX_NUM_TRIES;
+            }
+            numTries++;
+            return result.toCharArray();
+        }
+
+        @Override
+        public boolean shouldRetry(Resource<?> resource) {
+            return numTries < MAX_NUM_TRIES;
         }
     }
 }

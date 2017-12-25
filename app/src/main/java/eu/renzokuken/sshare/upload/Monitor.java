@@ -69,7 +69,7 @@ class Monitor {
         notifyError(e.simpleMessage, e.detailsMessage);
         String toastText = e.simpleMessage;
         if (e.detailsMessage != null) {
-            toastText += " (" + e.detailsMessage + ")";
+            toastText += " "+e.detailsMessage;
         }
         showToastInUiThread(context, toastText);
         e.printStackTrace();

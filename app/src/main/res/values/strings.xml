@@ -69,6 +69,10 @@
     <string name="cancel_upload_confirm">Are you sure you want to cancel upload of %1$s?</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
+    <string name="passphrase_is_required">A passphrase is required for private key %1$s</string>
+    <string name="passphrase">Passphrase</string>
+    <string name="pref_host_key_checking_mode">Host key check mode</string>
+    <string name="ask_passphrase_title">Passphrase required</string>
 
 
     <!-- Strings related to intent stuff and other stuff, don't translate -->
@@ -80,6 +84,8 @@
     <string name="notification_handle">notification_handle</string>
     <string name="question_handle">question_handle</string>
     <string name="message_handle">message_handle</string>
+    <string name="private_key_filename_handle">private_key_filename_handle</string>
+
     <string name="kill_upload_action">cancel_upload</string>
     <string name="new_upload_action">new_upload</string>
 
@@ -99,7 +105,6 @@
     </string-array>
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
-    <string name="pref_host_key_checking_mode">Host key check mode</string>
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

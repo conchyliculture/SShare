@@ -63,7 +63,7 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
             }
         } catch (IOException e) {
             if (monitor.shouldStop) {
-                throw new SShareUploadException(context.getString(R.string.user_cancelled_upload));
+                monitor.notifyError(context.getString(R.string.user_cancelled_upload), null);
             } else {
                 throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
             }

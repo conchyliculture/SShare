@@ -68,6 +68,7 @@ public class FileUploaderService extends Service {
         }
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
@@ -78,7 +79,7 @@ public class FileUploaderService extends Service {
                 cancelUpload(intent);
             }
         }
-        return START_NOT_STICKY; // TOdo check this
+        return START_NOT_STICKY; // Because the service should die when everything is done
     }
 
     private void cancelUpload(Intent intent) {
@@ -122,7 +123,5 @@ public class FileUploaderService extends Service {
         UploadRunnable task = new UploadRunnable(fileUploader, fileUri, monitor);
         monitorList.add(monitor);
         executorService.submit(task);
-
-
     }
 }
