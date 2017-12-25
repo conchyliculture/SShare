@@ -1,7 +1,9 @@
 package eu.renzokuken.sshare.ui;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,8 +23,6 @@ import eu.renzokuken.sshare.persistence.MyDao;
 import eu.renzokuken.sshare.upload.FileUploaderService;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +51,37 @@ public class MainActivity extends AppCompatActivity {
         return new ArrayList<>(getDatabaseHandler().getAllConnections());
     }
 
+    private void cancelUpload(Intent fromIntent) {
+        final int notificationId = fromIntent.getIntExtra(getString(R.string.notification_handle), -1);
+        Intent newIntent = new Intent(MainActivity.this, FileUploaderService.class);
+        newIntent.setAction(getString(R.string.kill_upload_action));
+        newIntent.putExtra(getString(R.string.notification_handle), notificationId);
+        startService(newIntent);
+        finish();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if (intent != null) {
             String action = intent.getAction();
-            if (action !=null && action.equals(getString(R.string.kill_uploads))){
-                Intent newIntent = new Intent(this, FileUploaderService.class);
-                newIntent.setAction(getString(R.string.kill_uploads));
-                startService(newIntent);
+            if (action != null && action.equals(getString(R.string.kill_upload_action))) {
+                String fileName = intent.getStringExtra(getString(R.string.filename_handle));
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                String message = String.format(getString(R.string.cancel_upload_confirm), fileName);
+                builder.setMessage(message)
+                        .setTitle(R.string.cancel_upload_title)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cancelUpload(intent);
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                (MainActivity.this).finish();
+                            }
+                        }).show();
             }
         }
         ArrayList<Connection> connectionList = getConnectionList();

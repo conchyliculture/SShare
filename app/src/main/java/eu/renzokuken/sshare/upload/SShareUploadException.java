@@ -7,15 +7,16 @@ package eu.renzokuken.sshare.upload;
 class SShareUploadException extends Exception {
 
     public final String simpleMessage;
-    public String detailsMessage = "";
+    public String detailsMessage = null;
 
     SShareUploadException(String customMessage, Throwable cause) {
         super(cause);
         this.simpleMessage = customMessage;
+        this.detailsMessage = "(Caused by: " + cause.getLocalizedMessage() + ")";
     }
 
     public SShareUploadException(String simpleMessage, String detailsMessage) {
-        super();
+        super(simpleMessage);
         this.simpleMessage = simpleMessage;
         this.detailsMessage = detailsMessage;
     }

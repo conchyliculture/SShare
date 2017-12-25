@@ -13,14 +13,12 @@ import java.io.Serializable;
  */
 
 public class FileUri implements Serializable {
-    private final Context context;
     public String fileName = "-";
     public long fileSize = -1;
     public long dateModified = -1;
-    public Uri uri;
+    public final Uri uri;
 
     public FileUri(Context context, Uri fileUri) {
-        this.context = context;
         this.uri = fileUri;
         Cursor returnCursor = context.getContentResolver().query(fileUri, null, null, null, null);
         if (returnCursor != null) {

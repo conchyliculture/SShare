@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.Random;
 
 import eu.renzokuken.sshare.R;
@@ -23,10 +24,10 @@ class Monitor {
     private final FileUri fileUri;
     private final Context context;
     private final NotificationManager notificationManager;
-    private int notificationId = 1;
     private final NotificationCompat.Builder notificationBuilder;
-    private long lastTick = System.currentTimeMillis();
     public boolean shouldStop = false;
+    int notificationId = 1;
+    private long lastTick = System.currentTimeMillis();
 
     public Monitor(Context context, FileUri fileUri) {
         this.context = context;
@@ -36,17 +37,19 @@ class Monitor {
         notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
         Random r = new Random();
         notificationId = r.nextInt(685463535); // lol
-
+        // Todo: maybe don't send the intent to MainActivity
         Intent cancelIntent = new Intent(this.context, MainActivity.class);
         //TODO: make sure we need these flags, and maybe use another activity than MainActivity
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        cancelIntent.setAction(context.getString(R.string.kill_uploads));
+        cancelIntent.setAction(context.getString(R.string.kill_upload_action));
+        cancelIntent.putExtra(context.getString(R.string.notification_handle), notificationId);
+        cancelIntent.putExtra(context.getString(R.string.filename_handle), fileUri.fileName);
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                context ,
+                context,
                 (int) System.currentTimeMillis(),
                 cancelIntent,
-                PendingIntent.FLAG_ONE_SHOT
+                PendingIntent.FLAG_UPDATE_CURRENT
         );
         notificationBuilder.addAction(R.drawable.ic_cancel_black_24dp, context.getString(R.string.cancel), pendingIntent);
     }
@@ -64,9 +67,9 @@ class Monitor {
 
     void error(final SShareUploadException e) {
         notifyError(e.simpleMessage, e.detailsMessage);
-        String toastText = e.detailsMessage;
-        if (e.getCause() != null) {
-            toastText+= " (Caused by: " + e.getCause().getLocalizedMessage() + ")";
+        String toastText = e.simpleMessage;
+        if (e.detailsMessage != null) {
+            toastText += " (" + e.detailsMessage + ")";
         }
         showToastInUiThread(context, toastText);
         e.printStackTrace();
@@ -105,7 +108,7 @@ class Monitor {
         }
         lastTick = now;
         int uploadedPercent = (int) ((100.0 * transferred) / fileUri.fileSize + 0.5);
-        String percentString = String.format("%1$d%%", uploadedPercent);
+        String percentString = String.format(Locale.getDefault(),"%1$d%%", uploadedPercent);
         notificationBuilder.setContentTitle(context.getString(R.string.uploading_filename, fileUri.fileName))
                 .setContentText(percentString)
                 .setSmallIcon(R.drawable.ic_file_upload_black_24dp)
@@ -124,15 +127,14 @@ class Monitor {
         notificationManager.notify(notificationId, notificationBuilder.build());
         // TODO: remove the notification after like 3 secs
     }
+
     void notifyError(String errorTitle, String errorSubText) {
         notificationBuilder.setContentTitle(errorTitle)
                 .setOngoing(false)
                 .setSmallIcon(R.drawable.ic_error_black_24dp)
                 .setProgress(0, 0, false);
         notificationBuilder.mActions.clear();
-        if (errorSubText!=null) {
-            notificationBuilder.setContentText(errorSubText);
-        }
+        notificationBuilder.setContentText(errorSubText);
         notificationManager.notify(notificationId, notificationBuilder.build());
     }
 }

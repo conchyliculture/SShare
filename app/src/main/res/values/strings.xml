@@ -14,8 +14,8 @@
     <string name="password_textview_hint">Password</string>
     <string name="remote_path_textview_hint">Remote path (leave empty for default)</string>
     <string name="create_button_text">Create</string>
-    <string name="no_connection_textview">No connection. Please add some!</string>
-    <string name="private_key_text_view">No private key. Please add some!</string>
+    <string name="no_connection_text">No connection. Please add some!</string>
+    <string name="private_key_text">No private key. Please add some!</string>
     <string name="no_private_key_help1">To add private key, use the menu and import a private key from your device.</string>
     <string name="no_private_key_help2">To generate this key, use ssh-keygen, for example:</string>
     <string name="no_private_key_help3">ssh-keygen -t rsa -b 2048 -f sshare_key</string>
@@ -24,32 +24,34 @@
     <string name="settings_menu_text">Settings</string>
     <string name="import_key_menu_text">Import private key</string>
     <string name="update_connection_button_text">Update</string>
-    <string name="notification_channel_id">sshare_notification</string>
     <string name="select_file_chooser_title">Select file</string>
-    <string name="error_unable_to_load_key">Unable to load key %1$s</string>
     <string name="change_key_button_text">Change key (current: %1$s)</string>
-    <string name="question_handle">question_handle</string>
     <string name="question_popup_title">Warning</string>
-    <string name="error_connection_timeout">Connection timeout to %1$s. Check hostname and port.</string>
     <string name="warning_ask_fingerprint_trust">Do you recognize the following fingerprint:\n%1$s\n</string>
     <string name="remote_host_key_not_accepted">Host key not recognized.</string>
-    <string name="error_disconnected_from_host">Disconnected from %1$s</string>
-    <string name="error_connecting_to_host_with_msg">Error connecting to %1$s</string>
-    <string name="error_could_not_connect">Could not connect.</string>
     <string name="error_cleanup">Error during cleanup.</string>
-    <string name="error_transport">Transport Error.</string>
+    <string name="error_connection_closed">Connection closed unexpectedly.</string>
+    <string name="error_connection_failed">Connection to %1$s failed.</string>
+    <string name="error_connection_timeout">Connection timeout to %1$s. Check hostname and port.</string>
+    <string name="error_connecting_to_host_with_msg">Error connecting to %1$s</string>
+    <string name="error_could_not_delete_key_file">Could not delete key file %1$s</string>
+    <string name="error_disconnected_from_host">Disconnected from %1$s</string>
     <string name="error_login_failed">Could not login. Check your credentials.</string>
+    <string name="error_permission_error">Permission error.</string>
+    <string name="error_sftp_generic">SFTP server error.</string>
+    <string name="error_sftp_no_such_file">Error: \"No such file\". Check your remote path</string>
+    <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
+    <string name="error_transport">Transport Error.</string>
+    <string name="error_unable_to_load_key">Unable to load key %1$s</string>
+    <string name="error_uploading_file">Error uploading %1$s</string>
+    <string name="error_user_did_not_recognize_key">User did not recognize remote host key.</string>
+
     <string name="connecting_to">Connecting to %1$s…</string>
     <string name="authenticating_to">Authenticating to %1$s…</string>
     <string name="upload_canceled">Upload cancelled</string>
-    <string name="upload_aborted">Upload aborted</string>
     <string name="uploading_filename">Uploading %1$s</string>
     <string name="upload_finished">Finished uploading %1$s</string>
-    <string name="error_permission_error">Permission error.</string>
-    <string name="error_connection_closed">Connection closed unexpectedly</string>
-    <string name="error_sftp_generic">SFTP server error.</string>
     <string name="connection_list_title">Connection List</string>
-    <string name="error_sftp_permission_denied">SFTP server said: Permission Denied. Check your remote path.</string>
     <string name="no_private_key_title">No private key found!</string>
     <string name="no_private_key_message">Please add some private key to use.</string>
     <string name="select_connection_title">Select Connection to use</string>
@@ -58,17 +60,29 @@
     <string name="default_port_number">22</string>
     <string name="attention_title">Attention!</string>
     <string name="connection_delete_confirmation_message">Are you sure you want to delete %1$s?</string>
-    <string name="message_handle">message_handle</string>
     <string name="unknown_host_key">Unknown Host Key</string>
     <string name="key_file_delete_confirmation_message">Are you sure you want to delete key %1$s?</string>
-    <string name="error_could_not_delete_key_file">Could not delete key file %1$s</string>
-    <string name="error_connection_failed">Connection failed to %1$s</string>
-    <string name="error_user_did_not_recognize_key">User did not recognize remote host key.</string>
+    <string name="user_cancelled_upload">Upload cancelled by user.</string>
+    <string name="as_user">as user %1$s</string>
+    <string name="cancel_upload_title">Cancel upload</string>
+    <string name="cancel_upload_confirm">Are you sure you want to cancel upload of %1$s?</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
 
-    <!-- Strings related to intent extra keys -->
+
+    <!-- Strings related to intent stuff and other stuff, don't translate -->
+    <string name="notification_channel_id">sshare_notification</string>
     <string name="connection_handle">connection_handle</string>
     <string name="data_handle">data_handle</string>
     <string name="title_handle">title_handle</string>
+    <string name="filename_handle">filename_handle</string>
+    <string name="notification_handle">notification_handle</string>
+    <string name="question_handle">question_handle</string>
+    <string name="message_handle">message_handle</string>
+    <string name="kill_upload_action">cancel_upload</string>
+    <string name="new_upload_action">new_upload</string>
+
+
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
     <!-- General settings -->
@@ -85,13 +99,6 @@
     <string name="pref_file_already_exists_default">OVERWRITE</string>
     <string name="pref_host_key_checking_mode_default">STRICT</string>
     <string name="pref_host_key_checking_mode">Host key check mode</string>
-    <string name="error_sftp_no_such_file">Error: \"No such file\". Check your remote path</string>
-    <string name="error_uploading_file">Error uploading %1$s</string>
-    <string name="kill_uploads">Kill Uploads</string>
-    <string name="new_upload">New Upload</string>
-    <string name="user_cancelled_upload">Upload cancelled by user</string>
-    <string name="cancel">Cancel</string>
-    <string name="as_user">as user %1$s</string>
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

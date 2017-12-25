@@ -72,15 +72,24 @@ public class FileUploaderService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         if (action != null) {
-            if (action.equals(getString(R.string.new_upload))) {
+            if (action.equals(getString(R.string.new_upload_action))) {
                 newUpload(intent);
-            } else if (action.equals(getString(R.string.kill_uploads))) {
-                for (Monitor monitor : monitorList) {
+            } else if (action.equals(getString(R.string.kill_upload_action))) {
+                cancelUpload(intent);
+            }
+        }
+        return START_NOT_STICKY; // TOdo check this
+    }
+
+    private void cancelUpload(Intent intent) {
+        if (intent.hasExtra(getString(R.string.notification_handle))) {
+            int notificationId = intent.getIntExtra(getString(R.string.notification_handle), -1);
+            for (Monitor monitor : monitorList) {
+                if (monitor.notificationId == notificationId) {
                     monitor.shouldStop = true;
                 }
             }
         }
-        return START_NOT_STICKY; // TOdo check this
     }
 
     private void newUpload(Intent intent) {
