@@ -1,12 +1,9 @@
 package eu.renzokuken.sshare;
 
-import android.arch.persistence.room.Room;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import eu.renzokuken.sshare.persistence.Connection;
-import eu.renzokuken.sshare.persistence.MyDB;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,9 +15,9 @@ import static org.junit.Assert.assertEquals;
 public class ConnectionUnitTests {
     private Connection testConnection;
 
-    private static String testHostname = "test.host.name";
-    private static int testPort = 12345;
-    private static String testUsername = "login";
+    private static final String testHostname = "test.host.name";
+    private static final int testPort = 12345;
+    private static final String testUsername = "login";
 
     @Before
     public void init(){

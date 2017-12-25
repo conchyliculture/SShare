@@ -21,13 +21,12 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class PersistenceTests {
-    private MyDB db;
     private MyDao dao;
 
     @Before
     public void initDB() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        db = MyDB.getDatabase(appContext);
+        MyDB db = MyDB.getDatabase(appContext);
         dao = db.connectionDao();
     }
     @Test

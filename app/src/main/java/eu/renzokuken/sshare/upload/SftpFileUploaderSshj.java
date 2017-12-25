@@ -62,8 +62,11 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
                     throw new SShareUploadException(context.getString(R.string.error_sftp_generic), e);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
+            if (monitor.shouldStop) {
+                throw new SShareUploadException(context.getString(R.string.user_cancelled_upload), e);
+            } else {
+                throw new SShareUploadException(context.getString(R.string.error_connection_closed), e);
+            }
         } catch (SecurityException e) {
             e.printStackTrace();
             throw new SShareUploadException(context.getString(R.string.error_permission_error), e);
@@ -156,11 +159,16 @@ class SftpFileUploaderSshj extends FileUploaderSshj {
         @Override
         public StreamCopier.Listener file(String name, long size) {
             return new StreamCopier.Listener() {
+
                 @Override
                 public void reportProgress(long transferred) throws IOException {
                     monitor.progress(transferred);
+                    if (monitor.shouldStop) {
+                        throw new IOException();
+                    }
                 }
             };
         }
+
     }
 }

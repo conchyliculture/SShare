@@ -87,6 +87,9 @@
     <string name="pref_host_key_checking_mode">Host key check mode</string>
     <string name="error_sftp_no_such_file">Error: \"No such file\". Check your remote path</string>
     <string name="error_uploading_file">Error uploading %1$s</string>
+    <string name="kill_uploads">Kill Uploads</string>
+    <string name="new_upload">New Upload</string>
+    <string name="user_cancelled_upload">Upload cancelled by user</string>
 
     <string-array name="pref_host_key_checking_mode_titles">
         <item>Strict Check (Ask)</item>

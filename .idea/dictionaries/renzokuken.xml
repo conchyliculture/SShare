@@ -10,6 +10,7 @@
       <w>sshj</w>
       <w>textview</w>
       <w>transfert</w>
+      <w>umask</w>
     </words>
   </dictionary>
 </component>

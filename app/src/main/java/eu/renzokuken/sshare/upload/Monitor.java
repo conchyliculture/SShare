@@ -1,7 +1,9 @@
 package eu.renzokuken.sshare.upload;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import java.util.Random;
 
 import eu.renzokuken.sshare.R;
+import eu.renzokuken.sshare.ui.MainActivity;
 
 /**
  * Created by renzokuken on 12/12/17.
@@ -25,6 +28,7 @@ class Monitor {
     private int notificationId = 1;
     private final NotificationCompat.Builder notificationBuilder;
     private long lastTick = System.currentTimeMillis();
+    public boolean shouldStop = false;
 
     public Monitor(Context context, FileUri fileUri) {
         this.context = context;
@@ -39,6 +43,18 @@ class Monitor {
         } else {
             Log.e(TAG, "Notification manager is null =(");
         }
+        Intent cancelIntent = new Intent(this.context, MainActivity.class);
+        //TODO: make sure we need these flags
+        cancelIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        cancelIntent.setAction(context.getString(R.string.kill_uploads));
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context ,
+                (int) System.currentTimeMillis(),
+                cancelIntent,
+                PendingIntent.FLAG_ONE_SHOT
+        );
+        notificationBuilder.setContentIntent(pendingIntent);
     }
 
     private static void showToastInUiThread(final Context context,
@@ -111,4 +127,5 @@ class Monitor {
     void progress(long transferred) {
         updateNotificationProgress(transferred);
     }
+
 }

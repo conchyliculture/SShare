@@ -111,7 +111,6 @@ public class ConnectionListFragment extends ListFragment {
                     fileURIs.add((Uri) p);
                 }
             }
-
         }
 
         @Override
@@ -119,6 +118,7 @@ public class ConnectionListFragment extends ListFragment {
             Connection connection = ((MainActivity) getActivity()).getConnectionList().get(i);
             for (Uri fileURI : fileURIs) {
                 Intent intent = new Intent(getActivity(), FileUploaderService.class);
+                intent.setAction(getString(R.string.new_upload));
                 intent.setData(fileURI);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(getString(R.string.connection_handle), connection);

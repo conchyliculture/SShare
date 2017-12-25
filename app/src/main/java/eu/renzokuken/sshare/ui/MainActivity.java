@@ -18,8 +18,10 @@ import eu.renzokuken.sshare.R;
 import eu.renzokuken.sshare.persistence.Connection;
 import eu.renzokuken.sshare.persistence.MyDB;
 import eu.renzokuken.sshare.persistence.MyDao;
+import eu.renzokuken.sshare.upload.FileUploaderService;
 
 public class MainActivity extends AppCompatActivity {
+
 
 
     @Override
@@ -52,7 +54,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
+        Intent intent = getIntent();
+        if (intent != null) {
+            String action = intent.getAction();
+            if (action !=null && action.equals(getString(R.string.kill_uploads))){
+                Intent newIntent = new Intent(this, FileUploaderService.class);
+                newIntent.setAction(getString(R.string.kill_uploads));
+                startService(newIntent);
+            }
+        }
         ArrayList<Connection> connectionList = getConnectionList();
 
         if (connectionList.isEmpty()) {

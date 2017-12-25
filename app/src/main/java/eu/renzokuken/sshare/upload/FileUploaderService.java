@@ -1,12 +1,16 @@
 package eu.renzokuken.sshare.upload;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.renzokuken.sshare.ConnectionConstants;
 import eu.renzokuken.sshare.R;
@@ -16,7 +20,7 @@ import eu.renzokuken.sshare.persistence.Connection;
  * Created by renzokuken on 11/12/17.
  */
 
-public class FileUploaderService extends IntentService {
+public class FileUploaderService extends Service {
 
     private static final String TAG = "FileUploaderService";
 
@@ -27,36 +31,89 @@ public class FileUploaderService extends IntentService {
         Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
     }
 
-    public FileUploaderService() {
-        super(TAG);
+    private ExecutorService executorService;
+    private final ArrayList<Monitor> monitorList = new ArrayList<>();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // let's create a thread pool with five threads
+        executorService = Executors.newFixedThreadPool(5);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private class UploadRunnable extends Thread {
+        private final FileUploaderSshj uploader;
+        private final Monitor monitor;
+        private final FileUri fileUri;
+
+        public UploadRunnable(FileUploaderSshj uploader, FileUri fileUri, Monitor monitor) {
+            this.fileUri = fileUri;
+            this.uploader = uploader;
+            this.monitor = monitor;
+        }
+
+        @Override
+        public void run() {
+            try {
+                uploader.uploadFile(fileUri);
+            } catch (SShareUploadException e) {
+                monitor.error(e);
+            }
+        }
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = intent.getAction();
+        if (action!=null) {
+            if (action.equals(getString(R.string.new_upload))) {
+                newUpload(intent);
+            } else if (action.equals(getString(R.string.kill_uploads))) {
+                killUploads();
+            }
+        }
+        return START_NOT_STICKY;
+    }
+
+    private void killUploads() {
+        for (Monitor monitor : monitorList) {
+            monitor.shouldStop = true;
+        }
+    }
+
+    private void newUpload(Intent intent) {
         Uri uri = intent.getData();
         if (uri == null) {
             Log.e(TAG, "Error getting a null fileURI");
-            return;
-        }
-        FileUri fileUri = new FileUri(this, uri);
-        Connection connection = (Connection) intent.getExtras().getSerializable(getString(R.string.connection_handle));
-        if (connection == null) {
-            Log.e(TAG, "Error getting a null connection");
-            return;
-        }
-
-        Monitor monitor = new Monitor(this, fileUri);
-        switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
-            case ENUM_PROTO_SFTP:
-                SftpFileUploaderSshj fileUploader = new SftpFileUploaderSshj(this, connection, monitor); // important d'avoir l'app context
-                try {
-                    fileUploader.uploadFile(fileUri);
-                } catch (SShareUploadException e) {
-                    monitor.error(e);
+        } else {
+            FileUri fileUri = new FileUri(this, uri);
+            Connection connection = null;
+            if (intent.hasExtra(getString(R.string.connection_handle))) {
+                connection = (Connection) intent.getSerializableExtra(getString(R.string.connection_handle));
+            }
+            if (connection == null) {
+                Log.e(TAG, "Error getting a null connection");
+            } else {
+                Monitor monitor = new Monitor(getApplicationContext(), fileUri);
+                FileUploaderSshj fileUploader;
+                switch (ConnectionConstants.ProtocolMethod.findByDbKey(connection.protocol)) {
+                    case ENUM_PROTO_SFTP:
+                        fileUploader = new SftpFileUploaderSshj(getApplicationContext(), connection, monitor); // important d'avoir l'app context
+                        break;
+                    default:
+                        monitor.updateNotificationError("Protocol " + connection.protocol + " not implemented", "");
+                        return;
                 }
-                break;
-            default:
-                Log.e(TAG, "Protocol " + connection.protocol + " not implemented");
+                UploadRunnable task = new UploadRunnable(fileUploader, fileUri, monitor);
+                monitorList.add(monitor);
+                executorService.submit(task);
+            }
         }
     }
 }
